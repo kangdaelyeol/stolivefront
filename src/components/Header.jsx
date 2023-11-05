@@ -1,5 +1,8 @@
 import React from 'react'
 import Styles from './header.module.css'
+
+const profileURL = "https://lh3.googleusercontent.com/a/ACg8ocI-3LrdNOhDIFId5_WXJHabTsFijFLobWNYrYEwLucb=s83-c-mo"
+
 export default function Header() {
     return (
         <div className={Styles.container}>
@@ -9,7 +12,7 @@ export default function Header() {
             </div>
             <div className={Styles.right}>
                 <div className={Styles.profile}>
-                    <img src="https://lh3.googleusercontent.com/a/ACg8ocI-3LrdNOhDIFId5_WXJHabTsFijFLobWNYrYEwLucb=s83-c-mo" alt="" className={Styles.profile__image} />
+                    <img src={profileURL} alt="" className={Styles.profile__image} />
                     <span className={Styles.name}>User</span>
                 </div>
             </div>
