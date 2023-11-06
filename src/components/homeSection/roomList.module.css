@@ -26,6 +26,7 @@
   margin: 0 7px;
   cursor: pointer;
   height: 180px;
+  box-shadow: 0px 5px 4px -1px rgba(0,0,0,0.5);
 }
 
 .box__top {
@@ -100,7 +101,9 @@
 .arrowbtn {
   color: #dde1e5;
 }
-
+.arrowbtn span {
+ transform: scaleY(1.5) translateY(-1px);
+}
 .arrowbtn__inactive {
   background-color: #c7ced5;
 }
