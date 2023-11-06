@@ -1,0 +1,18 @@
+/* Home */
+.container {
+  height: 100vh;
+}
+.background{
+  height: 100%;
+  background-color:#eeedee;
+  display: flex;
+  justify-content: center;
+}
+
+.main__padding{
+  padding: 20px;
+  background-color: white;
+  width: 800px;
+}
+
+
