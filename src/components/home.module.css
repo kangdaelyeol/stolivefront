@@ -1,16 +1,23 @@
+/* Home */
+.container {
+  height: 100vh;
+}
 .background{
+  height: 100%;
   background-color:#eeedee;
   display: flex;
   justify-content: center;
 }
 
 .main__padding{
-  padding: 10px;
+  padding: 20px;
   background-color: white;
   width: 800px;
 }
+
+/* Search */
+
 .search {
-  border:1px solid gray;
   display: flex;
   flex-direction: column;
   padding: 0 100px;
@@ -20,7 +27,6 @@
   text-align: center;
   font-weight: bold;
   font-size:20px;
-  letter-spacing: 1.5px;
   transform: scaleY(0.9);
 }
 
@@ -43,4 +49,130 @@
   border: none;
   flex-grow: 1;
   font-size: 20px;
+}
+
+.search__tags {
+  padding: 10px 0;
+  display: flex;
+}
+
+.search__tag {
+  color:white;
+  background-color: #d3302e;
+  border-radius: 100px;
+  padding: 2px 8px;
+  font-size: 10px;
+  margin-right: 5px;
+  letter-spacing: 0.05em;
+}
+
+/* Room__전체 카테고리 */
+.room__container {
+  padding: 10px 0;
+}
+
+.room__title {
+  padding: 10px 0;
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  transform: scaleY(0.95);
+}
+
+.rooms {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.room__box {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  background-color: #eeeeee;
+  border-radius: 10px;
+  margin: 0 7px;
+  cursor: pointer;
+  height: 180px;
+}
+
+.box__top {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  transform: scaleY(0.95);
+  margin-bottom: 5px;
+}
+
+.box__middle {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.box__middle__title {
+  font-size: 18px;
+  font-weight: bolder;
+  letter-spacing: 0.05em;
+  transform: scaleY(0.95);
+  margin-bottom: 6px;
+}
+
+.box__middle__description {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  transform: scaleY(0.9);
+}
+
+.box__bottom{
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.box__bottom__category{
+  display: flex;
+}
+
+.category__box {
+  border-radius: 100px;
+  font-size: 10px;
+  padding: 3px 7px;
+  color: white;
+  margin-right: 5px;
+  transform: scaleY(0.9);
+  letter-spacing: 0.05em;
+}
+
+.room__pagebar {
+  display: flex;
+  justify-content: space-around;
+  padding: 5px 40px;
+}
+
+.pagebar__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border:1px solid #e2e6ea;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: bold;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.arrowbtn {
+  color: #dde1e5;
+}
+
+.arrowbtn__inactive {
+  background-color: #c7ced5;
+}
+
+.pagebar__button span {
+  pointer-events: none;
 }
