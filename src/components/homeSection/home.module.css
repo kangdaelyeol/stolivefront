@@ -12,34 +12,3 @@
     background-color: white;
     width: 800px;
 }
-
-/* Loading Spinner */
-
-.loading__container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    height: 500px;
-}
-
-.loading__spinner {
-    position: absolute;
-    background-color: pink;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    z-index: 1;
-}
-
-.loading__content {
-    position: absolute;
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    background-color: white;
-}

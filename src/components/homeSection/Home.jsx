@@ -3,6 +3,7 @@ import Styles from './home.module.css'
 import Search from './Search.jsx'
 import RoomList from './RoomList.jsx'
 import CreateForm from './CreateForm.jsx'
+import LoadingSpinner from './LoadingSpinner.jsx'
 
 const REQUEST_URL = 'http://localhost:8000'
 
@@ -51,13 +52,13 @@ export default function Home() {
                 return result.json()
             })
             .then((data) => {
-                setIsLoading(true) // change true to false after making Loading Spinner
+                setIsLoading(false)
                 setRoomData([...data])
-            }).catch(e => {
-                console.log(e);
+            })
+            .catch((e) => {
+                console.log(e)
                 setIsLoading(false)
                 setRoomData(tempRoomData)
-
             })
     }, [refresh])
     // 대충 가공 해보기 -> 전체 카테고리 / 스터디 ....
@@ -66,15 +67,6 @@ export default function Home() {
     // Event Methods
     const onCreateBtnClick = () => {
         setIsCreate((v) => !v)
-    }
-
-    const LoadingSpinner = () => {
-        return (
-            <div className={Styles.loading__container}>
-                <div className={Styles.loading__spinner}> </div>
-                <div className={Styles.loading__content}>호리싯</div>
-            </div>
-        )
     }
 
     return (
