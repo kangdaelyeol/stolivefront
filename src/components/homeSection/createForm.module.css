@@ -1,23 +1,6 @@
 /* CreateForm */
 
-.createbtn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  font-weight: bold;
-  font-size: 20px;
-  line-height: 20px;
-  cursor: pointer;
-  background-color: cornflowerblue;
-  color: white;
-  z-index: 1;
-}
+
 
 .create {
   position: absolute;

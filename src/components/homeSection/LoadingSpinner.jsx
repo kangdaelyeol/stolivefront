@@ -2,6 +2,7 @@ import React from 'react';
 import Styles from "./loadingSpinner.module.css"
 
 export default function LoadingSpinner()  {
+
   return (
     <div className={Styles.loading__container}>
     <div className={`${Styles.loading__part1} ${Styles.common}`}> </div>

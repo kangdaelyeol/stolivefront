@@ -4,12 +4,12 @@ import Room from './components/Room'
 import Header from './components/Header'
 import Home from './components/homeSection/Home'
 
-const App = () => {
+const App = ({DBService}) => {
     return (
         <BrowserRouter>
             <Header />
             <Routes>
-                <Route element={<Home />} path="/" />
+                <Route DBService={DBService} element={<Home />} path="/" />
                 <Route element={<Room />} path="/room/:id" />
             </Routes>
         </BrowserRouter>

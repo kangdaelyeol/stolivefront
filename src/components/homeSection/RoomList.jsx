@@ -15,7 +15,7 @@ const CategoryBox = ({ value, main }) => {
     )
 }
 
-const RoomBox = ({ title, description, people, mainCategory, subCategory, roomId }) => {
+const RoomBox = ({ title, description, people, category, subCategory, roomId }) => {
     const navigate = useNavigate();
     const onBoxClick = (e) => {
         navigate(`/room/${roomId}`)
@@ -33,7 +33,7 @@ const RoomBox = ({ title, description, people, mainCategory, subCategory, roomId
             </div>
             <div className={Styles.box__bottom}>
                 <div className={Styles.box__bottom__category}>
-                    <CategoryBox main value={mainCategory} />
+                    <CategoryBox main value={category} />
                     {subCategory.map((c, i) => (
                         <CategoryBox value={c} key={i} />
                     ))}
