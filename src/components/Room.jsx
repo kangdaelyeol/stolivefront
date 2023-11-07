@@ -3,13 +3,11 @@ import { useParams } from 'react-router-dom'
 import Styles from './room.module.css'
 import tempImg from '../images/pimg.jpeg'
 import tempMyImg from '../images/p_profile.jpeg'
+import io from 'socket.io-client'
+
+const SOCKET_SERVER_URL = 'http://localhost:8080'
 
 const PeerData = [
-    {
-        userName: 'dophin123',
-        profile:
-            'https://lh3.googleusercontent.com/a/ACg8ocI-3LrdNOhDIFId5_WXJHabTsFijFLobWNYrYEwLucb=s83-c-mo',
-    },
     {
         userName: 'dophin123',
         profile:
@@ -27,6 +25,8 @@ const myData = {
     profile: tempImg,
     video: tempMyImg,
 }
+
+const socket = io(SOCKET_SERVER_URL)
 
 const PeerBox = ({ userName, profile, speaking, video, me }) => {
     return (
