@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react'
 import Styles from './home.module.css'
 import Search from './Search.jsx'
 import RoomList from './RoomList.jsx'
+import CreateForm from './CreateForm.jsx'
 
 const roomAllData = [
     {
@@ -30,57 +31,7 @@ const roomAllData = [
     },
 ]
 
-const CreateForm = ({setIsCreate}) => {
 
-    // States
-    const [formData, setFormData] = useState({
-        title: "",
-        description: "",
-        category: "",
-        subCategory: ""
-    })
-    const titleRef = useRef();
-    const desRef = useRef()
-    const categoryRef = useRef()
-    const subCategoryRef = useRef()
-    
-    // Event methods
-    const onEscapeClick = () => {
-        setIsCreate(false);
-    }
-    return (
-        <div className={Styles.create}>
-            <div className={Styles.create__container}>
-                <div onClick={onEscapeClick} className={Styles.create__escape}>X</div>
-                <div className={Styles.create__title}>방 만들기</div>
-                <form action="" className={Styles.create__form}>
-                    <div className={Styles.input__container}>
-                        <span>Title</span>
-                        <input ref={titleRef} name='title' type="text" className={Styles.title}/>
-                    </div>
-                    <div className={Styles.input__container}>
-                        <span>Description</span>
-                        <input ref={desRef} name='description' type="text" className={Styles.description} />
-                    </div>
-                    <div className={Styles.input__container}>
-                        <span>Category</span>
-                        <select ref={categoryRef} name="category" className={Styles.category} id="category">
-                            <option value="study">스터디</option>
-                            <option value="bob">혼밥</option>
-                            <option value="workout">운동</option>
-                            <option value="problem">고민상담</option>
-                        </select>
-                    </div>
-                    <div className={Styles.input__container}>
-                        <span>SubCategory</span>
-                        <input ref={subCategoryRef} name='subCategory' type="text" className={Styles.subcategory} />
-                    </div>
-                    <button className={Styles.submit}>호리싯</button>
-                </form>
-            </div>
-        </div>
-    )
-}
 
 export default function Home() {
     const [roomData, setRoomData] = useState(roomAllData)
@@ -108,8 +59,7 @@ export default function Home() {
             <div onClick={onCreateBtnClick} className={Styles.createbtn}>
                 +
             </div>
-            {/* {isCreate ? <CreateForm /> : ''} */}
-            <CreateForm setIsCreate={setIsCreate} />
+            {isCreate ? <CreateForm setIsCreate={setIsCreate} /> : ''}
         </div>
     )
 }
