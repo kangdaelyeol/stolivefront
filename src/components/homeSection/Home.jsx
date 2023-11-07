@@ -40,8 +40,14 @@ export default function Home({ DBService }) {
     // Room 받아오기
     useEffect(() => {
         setIsLoading(true)
-        setIsLoading(false)
-        setRoomData(tempRoomData)
+        DBService.getRooms().then((result) => {
+            if (!result) {
+                setIsLoading(false)
+                setRoomData(tempRoomData)
+            } else {
+                setRoomData([...result])
+            }
+        })
     }, [refresh])
     // 대충 가공 해보기 -> 전체 카테고리 / 스터디 ....
     // roomData는 서버에서 구분해서 줘도 되고, 여기서 다 받아온담 가공해서 따로 해도 되고
