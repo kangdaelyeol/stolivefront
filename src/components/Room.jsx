@@ -25,8 +25,8 @@ const myData = {
     profile: tempImg,
     video: tempMyImg,
 }
-
-const socket = io(SOCKET_SERVER_URL)
+// *** Socket io connection ***
+// const socket = io(SOCKET_SERVER_URL)
 
 const PeerBox = ({ userName, profile, speaking, video, me }) => {
     return (
