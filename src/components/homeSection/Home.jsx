@@ -42,10 +42,11 @@ export default function Home({ DBService }) {
         setIsLoading(true)
         DBService.getRooms().then((result) => {
             if (!result) {
-                setIsLoading(false)
                 setRoomData(tempRoomData)
+                setIsLoading(false)
             } else {
                 setRoomData([...result])
+                setIsLoading(false)
             }
         })
     }, [refresh])
@@ -59,6 +60,16 @@ export default function Home({ DBService }) {
 
     const onRefreshBtnClick = () => {
         setRefresh(!refresh)
+    }
+    
+    const createRoom = (data) => {
+        const submitData = {
+            ...data,
+            userName: "usreName"
+        }
+        DBService.createRoom(submitData).then(result => {
+            console.log(result);
+        })
     }
 
     return (
@@ -93,7 +104,7 @@ export default function Home({ DBService }) {
             >
                 R
             </div>
-            {isCreate ? <CreateForm setIsCreate={setIsCreate} /> : ''}
+            {isCreate ? <CreateForm setIsCreate={setIsCreate} createRoom={createRoom} /> : ''}
         </div>
     )
 }

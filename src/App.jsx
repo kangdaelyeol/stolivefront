@@ -9,7 +9,7 @@ const App = ({DBService}) => {
         <BrowserRouter>
             <Header />
             <Routes>
-                <Route DBService={DBService} element={<Home />} path="/" />
+                <Route element={<Home DBService={DBService} />} path="/" />
                 <Route element={<Room />} path="/room/:id" />
             </Routes>
         </BrowserRouter>

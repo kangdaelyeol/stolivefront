@@ -19,4 +19,24 @@ export class dbService {
             return false
         }
     }
+
+    createRoom = async (data) => {
+        try {
+            const result = await fetch(`${this.baseURL}/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  data
+                })
+            })
+            const json = await result.json()
+            console.log(json)
+            return json
+        } catch (e) {
+            console.log(e)
+            return false
+        }
+    }
 }

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import Styles from './createForm.module.css'
 
-export default function CreateForm({ setIsCreate }) {
+export default function CreateForm({ setIsCreate, createRoom }) {
     // States
     const [formData, setFormData] = useState({
         title: '',
@@ -36,7 +36,7 @@ export default function CreateForm({ setIsCreate }) {
         // create Room
         e.preventDefault()
         setIsCreate(false)
-        console.log(formData)
+        createRoom(formData)
     }
 
     return (
