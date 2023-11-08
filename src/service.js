@@ -28,8 +28,8 @@ export class dbService {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                  data
-                })
+                    data,
+                }),
             })
             const json = await result.json()
             console.log(json)
@@ -40,3 +40,27 @@ export class dbService {
         }
     }
 }
+
+// class mediaService {
+//     constructor() {}
+//     getCameras = async () => {
+//         try {
+//             const devices = await navigator.mediaDevices.enumerateDevices()
+//             const cameras = devices.filter(
+//                 (device) => device.kind === 'videoinput',
+//             )
+//             const currentCamera = myStream.getVideoTracks()[0]
+//             cameras.forEach((camera) => {
+//                 const option = document.createElement('option')
+//                 option.value = camera.deviceId
+//                 option.innerText = camera.label
+//                 if (currentCamera.label === camera.label) {
+//                     option.selected = true
+//                 }
+//                 camerasSelect.appendChild(option)
+//             })
+//         } catch (e) {
+//             console.log(e)
+//         }
+//     }
+// }
