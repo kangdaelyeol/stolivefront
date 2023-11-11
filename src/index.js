@@ -9,8 +9,6 @@ const roomDBService = new dbService(REQUEST_URL);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
     <App DBService={roomDBService}/>
-  </React.StrictMode>
 );
 

@@ -17,6 +17,7 @@
     letter-spacing: 0.03em;
 }
 
+/* Peer Box */
 .peers {
     display: flex;
     justify-content: center;
@@ -35,7 +36,7 @@
     width: 400px;
     height: 225px;
     border-radius: 10px;
-    margin:10px;
+    margin: 10px;
 }
 .peer__info {
     position: absolute;
@@ -65,34 +66,34 @@
     transform: scaleY(0.9);
 }
 
+.me {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-weight: bold;
+    width: 50px;
+    height: 50px;
+    color: white;
+    background-color: cornflowerblue;
+    z-index: 1;
+}
+
+.peer__speaking {
+    border: 2px solid #3aff44;
+}
 
 /* Temp attribute - testing video view form*/
+
 .peer__video img {
-  width: 100%;
-  transform: translateY(-100px);
+    width: 100%;
+    transform: translateY(-100px);
 }
 
 .peer__profile img {
     width: 22px;
     border-radius: 50%;
-}
-
-.peer__speaking {
-  border: 2px solid #3aff44;
-}
-
-.me {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  font-weight: bold;
-  width: 50px;
-  height: 50px;
-  color: white;
-  background-color: cornflowerblue;
-  z-index: 1;
 }

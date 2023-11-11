@@ -4,10 +4,11 @@ import Styles from './room.module.css'
 import tempImg from '../images/pimg.jpeg'
 import tempMyImg from '../images/p_profile.jpeg'
 import io from 'socket.io-client'
+import { MediaService } from '../service'
+const SOCKET_SERVER_URL = 'http://localhost:8000'
+const MediaServ = new MediaService()
 
-const SOCKET_SERVER_URL = 'http://localhost:8080'
-
-const VIDEO_WIDTH = 400;
+const VIDEO_WIDTH = 400
 
 const PeerData = [
     {
@@ -28,7 +29,6 @@ const myData = {
     video: tempMyImg,
 }
 // *** Socket io connection ***
-// const socket = io(SOCKET_SERVER_URL)
 
 const PeerBox = ({
     userName,
@@ -78,83 +78,144 @@ const PeerBox = ({
 }
 
 const Room = () => {
+    const { id } = useParams()
     // *** useState ***
     const [myStream, setMyStream] = useState(null)
     const [muted, setMuted] = useState(false)
     const [cameraOff, setCameraOff] = useState(false)
     const [roomName, setRoomName] = useState(null)
-    const [peerConnection, setPeerConnection] = useState({})
+    const [peerConnections, setPeerConnections] = useState({})
     const [connectedList, setConnectedList] = useState([])
     const [cameraOptValues, setCameraOptValues] = useState([])
+    const [iceQueue, setIceQueue] = useState([])
+    const [socket, setSocket] = useState(null);
 
     // *** useRef ***
     const cameraSelectRef = useRef()
 
-    // *** useEffect ***
+    // setIoListener
+    const setIoListener = (myStream) => {
+        socket.on('welcome', async (senderId) => {
+            // Welcome -> 처음 온 사람만 보냄
+            // senderId -> 처음 온 사람의 Id -> 그 아이디에 대한 peerConnection 처리
+            const peerConnection = getRTCPeerConnection(senderId)
+            peerConnections[`${senderId}`] = peerConnection
+
+            const offer = await peerConnections[`${senderId}`].createOffer()
+            peerConnections[`${senderId}`].setLocalDescription(offer)
+            console.log('sent the offer')
+            socket.emit('offer', offer, `${roomName}${senderId}`)
+        })
+
+        socket.on('offer', async (offer, senderId) => {
+            // 받은 id == 상대방의 id
+
+            // 나는 처음와서 roomJoin 보내고 있던 상대는 offer 받음
+            const peerConnection = getRTCPeerConnection(senderId)
+            console.log('received the offer')
+            peerConnection.setRemoteDescription(offer)
+            const answer = await peerConnections[`${senderId}`].createAnswer()
+            peerConnection.setLocalDescription(answer)
+            socket.emit('answer', answer, `${roomName}${senderId}`)
+            setPeerConnections((v) => ({ ...v, [senderId]: peerConnection }))
+            peerConnections[`${senderId}`] = peerConnection
+            console.log('sent the answer')
+        })
+
+        socket.on('answer', (answer, senderName) => {
+            console.log('received the answer', answer)
+            peerConnections[`${senderName}`].setRemoteDescription(answer)
+        })
+
+        socket.on('ice', (ice, senderName) => {
+            console.log('received ice candidate')
+            if (!peerConnections[`${senderName}`]) {
+                setIceQueue((v) => [...v.push(ice)])
+                return
+            } else if (iceQueue.length !== 0) {
+                const queueLength = iceQueue.length
+                for (let i = 0; i < queueLength; i++) {
+                    peerConnections[`${senderName}`].addIceCandidate(
+                        iceQueue[i],
+                    )
+                    setIceQueue([])
+                }
+            }
+            peerConnections[`${senderName}`].addIceCandidate(ice)
+        })
+        function getRTCPeerConnection(senderId) {
+            const peerConnection = new RTCPeerConnection({
+                iceServers: [
+                    {
+                        urls: [
+                            'stun:stun.l.google.com:19302',
+                            'stun:stun1.l.google.com:19302',
+                            'stun:stun2.l.google.com:19302',
+                            'stun:stun3.l.google.com:19302',
+                            'stun:stun4.l.google.com:19302',
+                        ],
+                    },
+                ],
+            })
+            peerConnection.addEventListener('icecandidate', (data) => {
+                handleIce(data, senderId)
+            })
+            peerConnection.addEventListener('addstream', (data) => {
+                handleAddStream(data, senderId)
+            })
+            myStream
+                .getTracks()
+                .forEach((track) => peerConnection.addTrack(track, myStream))
+            return peerConnection
+        }
+
+        function handleIce(data, senderId) {
+            console.log('sent candidate')
+            socket.emit('ice', data.candidate, `${roomName}${senderId}`)
+        }
+
+        function handleAddStream(data, senderId) {
+            console.log('addStream', senderId, data)
+            // console.log('addStream for : ', senderId)
+            // const peerFaceBox = document.createElement('div')
+            // peerFaceBox.classList.add('peerface', `V_${senderId}`)
+            // const peerVideo = document.createElement('video')
+            // peerVideo.setAttribute('autoplay', 'true')
+            // peerVideo.setAttribute('playsinline', 'true')
+            // peerVideo.setAttribute('width', MAX_OFFSET)
+            // peerVideo.setAttribute('height', MAX_OFFSET)
+            // peerVideo.srcObject = data.stream
+            // peerFaceBox.appendChild(peerVideo)
+            // streamBox.appendChild(peerFaceBox)
+        }
+        socket.on('willleave', (senderId) => {
+            console.log(senderId, 'leave')
+            // handleRemoveStream(senderId)
+        })
+    }
+
+    // *** useEffect - GetMedia ***
     useEffect(() => {
-        ;(async () => {
-            let mStream = null
-            const camerasSelect = []
-            async function getCameras() {
-                try {
-                    const devices =
-                        await navigator.mediaDevices.enumerateDevices()
-                    const cameras = devices.filter(
-                        (device) => device.kind === 'videoinput',
-                    )
-                    const currentCamera = mStream?.getVideoTracks()[0]
-                    cameras.forEach((camera) => {
-                        const option = {}
-                        option.value = camera.deviceId
-                        option.name = camera.label
-                        if (currentCamera.label === camera.label) {
-                            option.selected = true
-                        }
-                        camerasSelect.push(option)
-                    })
-                } catch (e) {
-                    console.log(e)
-                }
-                setCameraOptValues([...camerasSelect])
-                // mStream -> video srcObject속성에 들어갈 스트림
-                setMyStream(mStream)
-            }
-
-            async function getMedia(deviceId) {
-                const initialConstrains = {
-                    audio: true,
-                    video: { facingMode: 'user' },
-                }
-                const cameraConstraints = {
-                    audio: true,
-                    video: { deviceId: { exact: deviceId } },
-                }
-                try {
-                    mStream = await navigator.mediaDevices.getUserMedia(
-                        deviceId ? cameraConstraints : initialConstrains,
-                    )
-
-                    if (!deviceId) {
-                        await getCameras()
-                    }
-                } catch (e) {
-                    console.log('no getMedia', e)
-                }
-            }
-            async function initCall() {
-                // getMedia -> set mystream
-                await getMedia()
-                // roomName = window.location.pathname.split('/')[2]
-                // socket.emit('join_room', roomName, socket.id, username)
-            }
-            await initCall()
-        })()
-    }, [])
+        if(!socket) setSocket(io(SOCKET_SERVER_URL));
+        else {
+            ;(async () => {
+                socket.on('connect', async () => {
+                    console.log('socket connection')
+                    const [myStream, camerasSelect] = await MediaServ.initCall()
+                    setMyStream(myStream)
+                    setCameraOptValues([...camerasSelect])
+                    setIoListener(myStream)
+                    socket.emit('join_room', id, socket.id, myData.userName)
+                })
+            })()
+            socket.on('error', (e) => {
+                console.log(e)
+            })
+        }
+    }, [socket])
 
     const handleMuteClick = () => setMuted((v) => !v)
     const handleCameraClick = () => setCameraOff((v) => !v)
-
-    const { id } = useParams()
 
     // 일단 peerbox 사이즈 임의로 16:9 (400 / 225)
     return (
