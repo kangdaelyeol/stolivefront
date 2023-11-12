@@ -77,13 +77,14 @@ const PeerBox = ({
     )
 }
 
-const Room = () => {
+export default function Room () {
     const { id } = useParams()
+    const roomName = id;
     // *** useState ***
     const [myStream, setMyStream] = useState(null)
     const [muted, setMuted] = useState(false)
     const [cameraOff, setCameraOff] = useState(false)
-    const [roomName, setRoomName] = useState(null)
+    // const [roomName, setRoomName] = useState(null)
     const [peerConnections, setPeerConnections] = useState({})
     const [connectedList, setConnectedList] = useState([])
     const [cameraOptValues, setCameraOptValues] = useState([])
@@ -99,11 +100,11 @@ const Room = () => {
             // Welcome -> 처음 온 사람만 보냄
             // senderId -> 처음 온 사람의 Id -> 그 아이디에 대한 peerConnection 처리
             const peerConnection = getRTCPeerConnection(senderId)
-            peerConnections[`${senderId}`] = peerConnection
-
-            const offer = await peerConnections[`${senderId}`].createOffer()
-            peerConnections[`${senderId}`].setLocalDescription(offer)
-            console.log('sent the offer')
+            
+            const offer = await peerConnection.createOffer()
+            peerConnection.setLocalDescription(offer)
+            console.log('sent the offer', roomName)
+            setPeerConnections((v) => ({ ...v, [senderId]: peerConnection }))
             socket.emit('offer', offer, `${roomName}${senderId}`)
         })
 
@@ -112,13 +113,13 @@ const Room = () => {
 
             // 나는 처음와서 roomJoin 보내고 있던 상대는 offer 받음
             const peerConnection = getRTCPeerConnection(senderId)
-            console.log('received the offer')
+            console.log('received the offer from', senderId)
+            console.log(peerConnections)
             peerConnection.setRemoteDescription(offer)
             const answer = await peerConnections[`${senderId}`].createAnswer()
             peerConnection.setLocalDescription(answer)
             socket.emit('answer', answer, `${roomName}${senderId}`)
             setPeerConnections((v) => ({ ...v, [senderId]: peerConnection }))
-            peerConnections[`${senderId}`] = peerConnection
             console.log('sent the answer')
         })
 
@@ -196,7 +197,10 @@ const Room = () => {
 
     // *** useEffect - GetMedia ***
     useEffect(() => {
-        if(!socket) setSocket(io(SOCKET_SERVER_URL));
+        if(!socket){
+            setSocket(io(SOCKET_SERVER_URL));
+        }
+            
         else {
             ;(async () => {
                 socket.on('connect', async () => {
@@ -207,10 +211,10 @@ const Room = () => {
                     setIoListener(myStream)
                     socket.emit('join_room', id, socket.id, myData.userName)
                 })
+                socket.on('error', (e) => {
+                    console.log(e)
+                })
             })()
-            socket.on('error', (e) => {
-                console.log(e)
-            })
         }
     }, [socket])
 
@@ -257,5 +261,3 @@ const Room = () => {
         </div>
     )
 }
-
-export default Room
