@@ -28,7 +28,7 @@ export const getListeners = (
         console.log('received the offer from', senderId)
         console.log(peerConnections)
         peerConnection.setRemoteDescription(offer)
-        const answer = await peerConnections[`${senderId}`].createAnswer()
+        const answer = await peerConnection.createAnswer()
         peerConnection.setLocalDescription(answer)
         socket.emit('answer', answer, `${roomName}${senderId}`)
         setPeerConnections((v) => ({ ...v, [senderId]: peerConnection }))
@@ -43,7 +43,11 @@ export const getListeners = (
     const onIce = (ice, senderName) => {
         console.log('received ice candidate')
         if (!peerConnections[`${senderName}`]) {
-            setIceQueue((v) => [...v.push(ice)])
+            setIceQueue((v) => {
+                const newIceQueue = [...v]
+                newIceQueue.push(ice)
+                return newIceQueue
+            })
             return
         } else if (iceQueue.length !== 0) {
             const queueLength = iceQueue.length
@@ -100,4 +104,8 @@ export const getListeners = (
         // peerFaceBox.appendChild(peerVideo)
         // streamBox.appendChild(peerFaceBox)
     }
+
+    // define dependency & listner
+
+    return [onWelcome, onOffer, onAnswer, onIce]
 }

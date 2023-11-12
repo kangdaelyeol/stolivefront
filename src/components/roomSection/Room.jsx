@@ -5,6 +5,7 @@ import tempImg from '../../images/pimg.jpeg'
 import tempMyImg from '../../images/p_profile.jpeg'
 import io from 'socket.io-client'
 import { MediaService } from '../../service'
+import { getListeners } from './listenerController'
 const SOCKET_SERVER_URL = 'http://localhost:8000'
 const MediaServ = new MediaService()
 
@@ -97,67 +98,6 @@ export default function Room() {
 
     // IO Listener Initialize - when PeerConnections change
 
-    const onWelcome = useCallback(
-        async (senderId) => {
-            // Welcome -> 처음 온 사람만 보냄
-            // senderId -> 처음 온 사람의 Id -> 그 아이디에 대한 peerConnection 처리
-            const peerConnection = getRTCPeerConnection(senderId)
-
-            const offer = await peerConnection.createOffer()
-            peerConnection.setLocalDescription(offer)
-            console.log('sent the offer', roomName)
-            setPeerConnections((v) => ({ ...v, [senderId]: peerConnection }))
-            socket.emit('offer', offer, `${roomName}${senderId}`)
-        },
-        [peerConnections],
-    )
-
-    const onOffer = useCallback(
-        async (offer, senderId) => {
-            // 받은 id == 상대방의 id
-
-            // 나는 처음와서 roomJoin 보내고 있던 상대는 offer 받음
-            const peerConnection = getRTCPeerConnection(senderId)
-            console.log('received the offer from', senderId)
-            console.log(peerConnections)
-            peerConnection.setRemoteDescription(offer)
-            const answer = await peerConnections[`${senderId}`].createAnswer()
-            peerConnection.setLocalDescription(answer)
-            socket.emit('answer', answer, `${roomName}${senderId}`)
-            setPeerConnections((v) => ({ ...v, [senderId]: peerConnection }))
-            console.log('sent the answer')
-        },
-        [peerConnections],
-    )
-
-    const onAnswer = useCallback(
-        (answer, senderName) => {
-            console.log('received the answer', answer)
-            peerConnections[`${senderName}`].setRemoteDescription(answer)
-        },
-        [peerConnections],
-    )
-
-    const onIce = useCallback(
-        (ice, senderName) => {
-            console.log('received ice candidate')
-            if (!peerConnections[`${senderName}`]) {
-                setIceQueue((v) => [...v.push(ice)])
-                return
-            } else if (iceQueue.length !== 0) {
-                const queueLength = iceQueue.length
-                for (let i = 0; i < queueLength; i++) {
-                    peerConnections[`${senderName}`].addIceCandidate(
-                        iceQueue[i],
-                    )
-                    setIceQueue([])
-                }
-            }
-            peerConnections[`${senderName}`].addIceCandidate(ice)
-        },
-        [peerConnections],
-    )
-
     // setIoListener
     const setIoListener = (
         myStream,
@@ -166,9 +106,19 @@ export default function Room() {
         setPeerConnections,
         iceQueue,
         setIceQueue,
-        socket
+        socket,
     ) => {
         if (socket) {
+            const [onWelcome, onOffer, onAnswer, onIce] = getListeners(
+                myStream,
+                roomName,
+                peerConnections,
+                setPeerConnections,
+                iceQueue,
+                setIceQueue,
+                socket,
+            )
+
             socket.on('welcome', onWelcome)
 
             socket.on('offer', onOffer)
@@ -177,57 +127,13 @@ export default function Room() {
 
             socket.on('ice', onIce)
 
+            setListeners({ onWelcome, onOffer, onAnswer, onIce })
+
             socket.on('willleave', (senderId) => {
                 console.log(senderId, 'leave')
                 // handleRemoveStream(senderId)
             })
         }
-    }
-
-    function getRTCPeerConnection(senderId) {
-        const peerConnection = new RTCPeerConnection({
-            iceServers: [
-                {
-                    urls: [
-                        'stun:stun.l.google.com:19302',
-                        'stun:stun1.l.google.com:19302',
-                        'stun:stun2.l.google.com:19302',
-                        'stun:stun3.l.google.com:19302',
-                        'stun:stun4.l.google.com:19302',
-                    ],
-                },
-            ],
-        })
-        peerConnection.addEventListener('icecandidate', (data) => {
-            handleIce(data, senderId)
-        })
-        peerConnection.addEventListener('addstream', (data) => {
-            handleAddStream(data, senderId)
-        })
-        myStream
-            .getTracks()
-            .forEach((track) => peerConnection.addTrack(track, myStream))
-        return peerConnection
-    }
-
-    function handleIce(data, senderId) {
-        console.log('sent candidate')
-        socket.emit('ice', data.candidate, `${roomName}${senderId}`)
-    }
-
-    function handleAddStream(data, senderId) {
-        console.log('addStream', senderId, data)
-        // console.log('addStream for : ', senderId)
-        // const peerFaceBox = document.createElement('div')
-        // peerFaceBox.classList.add('peerface', `V_${senderId}`)
-        // const peerVideo = document.createElement('video')
-        // peerVideo.setAttribute('autoplay', 'true')
-        // peerVideo.setAttribute('playsinline', 'true')
-        // peerVideo.setAttribute('width', MAX_OFFSET)
-        // peerVideo.setAttribute('height', MAX_OFFSET)
-        // peerVideo.srcObject = data.stream
-        // peerFaceBox.appendChild(peerVideo)
-        // streamBox.appendChild(peerFaceBox)
     }
 
     // *** useEffect - GetMedia ***
@@ -248,7 +154,7 @@ export default function Room() {
                         setPeerConnections,
                         iceQueue,
                         setIceQueue,
-                        socket
+                        socket,
                     )
                     socket.emit('join_room', id, socket.id, myData.userName)
                 })
@@ -260,14 +166,33 @@ export default function Room() {
     }, [socket])
 
     useEffect(() => {
-        setIoListener(
-            myStream,
-            roomName,
-            peerConnections,
-            setPeerConnections,
-            iceQueue,
-            setIceQueue,
-        )
+        if (socket) {
+            console.log("changed peerConnections -> reset Listeners", peerConnections)
+            const [onWelcome, onOffer, onAnswer, onIce] = getListeners(
+                myStream,
+                roomName,
+                peerConnections,
+                setPeerConnections,
+                iceQueue,
+                setIceQueue,
+                socket,
+            )
+            socket.off('welcome', listeners.onWelcome)
+            socket.off('offer', listeners.onOffer)
+            socket.off('answer', listeners.onAnswer)
+            socket.off('ice', listeners.onIce)
+
+            socket.on('welcome', onWelcome)
+
+            socket.on('offer', onOffer)
+
+            socket.on('answer', onAnswer)
+
+            socket.on('ice', onIce)
+
+            setListeners({ onWelcome, onOffer, onAnswer, onIce })
+
+        }
     }, [peerConnections])
 
     const handleMuteClick = () => setMuted((v) => !v)
