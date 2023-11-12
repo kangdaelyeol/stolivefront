@@ -15,9 +15,11 @@ export const getListeners = (
 
         const offer = await peerConnection.createOffer()
         peerConnection.setLocalDescription(offer)
-        console.log('sent the offer', roomName)
         setPeerConnections((v) => ({ ...v, [senderId]: peerConnection }))
+        console.log("await emit offer")
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         socket.emit('offer', offer, `${roomName}${senderId}`)
+        console.log('sent the offer', roomName)
     }
 
     const onOffer = async (offer, senderId) => {
@@ -30,9 +32,9 @@ export const getListeners = (
         peerConnection.setRemoteDescription(offer)
         const answer = await peerConnection.createAnswer()
         peerConnection.setLocalDescription(answer)
-        socket.emit('answer', answer, `${roomName}${senderId}`)
         setPeerConnections((v) => ({ ...v, [senderId]: peerConnection }))
         console.log('sent the answer')
+        socket.emit('answer', answer, `${roomName}${senderId}`)
     }
 
     const onAnswer = (answer, senderName) => {
