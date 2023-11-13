@@ -9,6 +9,7 @@ export default function CreateForm({ setIsCreate, createRoom }) {
         category: '',
         subCategory: '',
     })
+    
     const titleRef = useRef()
     const desRef = useRef()
     const categoryRef = useRef()

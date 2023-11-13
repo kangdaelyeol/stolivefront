@@ -1,62 +1,48 @@
-export class dbService {
+class HttpReq {
     constructor(baseURL) {
         this.baseURL = baseURL
     }
 
-    getRooms = async () => {
+    postFetchReq = async (reqURL, body) => {
         try {
-            const result = await fetch(`${this.baseURL}/search`, {
+            const result = await fetch(`${this.baseURL}/${reqURL}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: body ? JSON.stringify(body) : null,
             })
-
             const json = await result.json()
             return json
         } catch (e) {
             console.log(e)
             return false
         }
+    }
+}
+
+export class dbService {
+    constructor(baseURL) {
+        this.baseURL = baseURL
+        this.http = new HttpReq(baseURL)
+    }
+
+    getRooms = async () => {
+        const rooms = await this.http.postFetchReq('search')
+        console.log(rooms)
+        return rooms
     }
 
     createRoom = async (data) => {
-        try {
-            const result = await fetch(`${this.baseURL}/create`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    data,
-                }),
-            })
-            const json = await result.json()
-            console.log(json)
-            return json
-        } catch (e) {
-            console.log(e)
-            return false
-        }
+        const result = await this.http.postFetchReq('create', { data })
+        console.log(result)
+        return result
     }
 
     getRoomById = async (roomid) => {
-        try {
-            const result = await fetch(`${this.baseURL}/roominfo`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    roomid,
-                }),
-            })
-            if (!result) return false
-            return result
-        } catch (e) {
-            console.log(e)
-            return false
-        }
+
+        const result = await this.http.postFetchReq('roominfo',{roomid})
+        return result;
     }
 }
 

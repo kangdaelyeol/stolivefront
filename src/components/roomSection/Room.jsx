@@ -145,11 +145,9 @@ export default function Room({ DBService }) {
     // ** useEffect - isExist -> room Info
     useEffect(() => {
         ;(async () => {
-            const result = await DBService.getRoomById(roomName)
-            const data = await result.json();
+            const data = await DBService.getRoomById(roomName)
             console.log(roomName)
             console.log(data)
-            
         })()
     }, [])
     const handleMuteClick = () => {

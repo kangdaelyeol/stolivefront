@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Styles from './home.module.css'
 import Search from './Search.jsx'
 import RoomList from './RoomList.jsx'
@@ -38,6 +39,7 @@ export default function Home({ DBService }) {
     const [refresh, setRefresh] = useState(true)
     const [isLoading, setIsLoading] = useState(false)
 
+    const navigate = useNavigate()
 
     // Room 받아오기
     useEffect(() => {
@@ -63,15 +65,18 @@ export default function Home({ DBService }) {
     const onRefreshBtnClick = () => {
         setRefresh(!refresh)
     }
-    
+
     const createRoom = (data) => {
         const submitData = {
             ...data,
-            userName: "usreName"
+            userName: 'usreName',
         }
         console.log(submitData)
-        DBService.createRoom(submitData).then(result => {
-            console.log(result);
+        DBService.createRoom(submitData).then((result) => {
+            console.log(result)
+            const { roomId } = result
+            if(roomId)
+            navigate(`/room/${roomId}`)
         })
     }
 
@@ -107,7 +112,11 @@ export default function Home({ DBService }) {
             >
                 R
             </div>
-            {isCreate ? <CreateForm setIsCreate={setIsCreate} createRoom={createRoom} /> : ''}
+            {isCreate ? (
+                <CreateForm setIsCreate={setIsCreate} createRoom={createRoom} />
+            ) : (
+                ''
+            )}
         </div>
     )
 }
