@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Styles from './room.module.css'
 import tempImg from '../../images/pimg.jpeg'
@@ -6,10 +6,10 @@ import tempMyImg from '../../images/p_profile.jpeg'
 import io from 'socket.io-client'
 import { MediaService } from '../../service'
 import { getListeners } from './listenerController'
+import PeerBox from './PeerBox'
+import ControlBar from './ControlBar'
 const SOCKET_SERVER_URL = 'http://localhost:8000'
 const MediaServ = new MediaService()
-
-const VIDEO_WIDTH = 400
 
 const tempProfile =
     'https://lh3.googleusercontent.com/a/ACg8ocI-3LrdNOhDIFId5_WXJHabTsFijFLobWNYrYEwLucb=s83-c-mo'
@@ -20,67 +20,6 @@ const myData = {
     video: tempMyImg,
 }
 // *** Socket io connection ***
-
-const PeerBox = ({
-    userName,
-    profile,
-    speaking,
-    video,
-    me,
-    message,
-    myStream,
-}) => {
-    const videoRef = useRef()
-    useEffect(() => {
-        if (!videoRef.current) return
-        videoRef.current.srcObject = myStream
-    }, [myStream])
-
-    useEffect(() => {
-        if (!me && videoRef.current) {
-            videoRef.current.srcObject = video
-        }
-    }, [video])
-    return (
-        <div
-            className={`${Styles.peer__box} ${
-                speaking ? Styles.peer__speaking : ''
-            }`}
-        >
-            {me ? <div className={Styles.me}>나</div> : ''}
-            <div className={Styles.peer__video}>
-                {me ? (
-                    <>
-                        <video
-                            ref={videoRef}
-                            width={VIDEO_WIDTH}
-                            autoPlay
-                            playsInline
-                            className={Styles.myface}
-                        ></video>
-                    </>
-                ) : (
-                    <>
-                        <video
-                            ref={videoRef}
-                            width={VIDEO_WIDTH}
-                            autoPlay
-                            playsInline
-                            className={Styles.myface}
-                        ></video>
-                    </>
-                )}
-                {/* {message? <Message /> : ""} */}
-            </div>
-            <div className={Styles.peer__info}>
-                <div className={Styles.peer__profile}>
-                    <img src={profile} alt="" />
-                    <span className={Styles.peer__name}>{userName}</span>
-                </div>
-            </div>
-        </div>
-    )
-}
 
 export default function Room() {
     const { id } = useParams()
@@ -114,16 +53,17 @@ export default function Room() {
         setConnectedList,
     ) => {
         if (socket) {
-            const [onWelcome, onOffer, onAnswer, onIce, onWillLeave] = getListeners(
-                myStream,
-                roomName,
-                peerConnections,
-                setPeerConnections,
-                iceQueue,
-                setIceQueue,
-                socket,
-                setConnectedList,
-            )
+            const [onWelcome, onOffer, onAnswer, onIce, onWillLeave] =
+                getListeners(
+                    myStream,
+                    roomName,
+                    peerConnections,
+                    setPeerConnections,
+                    iceQueue,
+                    setIceQueue,
+                    socket,
+                    setConnectedList,
+                )
 
             socket.on('welcome', onWelcome)
 
@@ -134,7 +74,7 @@ export default function Room() {
             socket.on('ice', onIce)
 
             socket.on('willleave', onWillLeave)
-            
+
             setListeners({ onWelcome, onOffer, onAnswer, onIce, onWillLeave })
         }
     }
@@ -176,21 +116,22 @@ export default function Room() {
                 'changed peerConnections -> reset Listeners',
                 peerConnections,
             )
-            const [onWelcome, onOffer, onAnswer, onIce, onWillLeave] = getListeners(
-                myStream,
-                roomName,
-                peerConnections,
-                setPeerConnections,
-                iceQueue,
-                setIceQueue,
-                socket,
-                setConnectedList,
-            )
+            const [onWelcome, onOffer, onAnswer, onIce, onWillLeave] =
+                getListeners(
+                    myStream,
+                    roomName,
+                    peerConnections,
+                    setPeerConnections,
+                    iceQueue,
+                    setIceQueue,
+                    socket,
+                    setConnectedList,
+                )
             socket.off('welcome', listeners.onWelcome)
             socket.off('offer', listeners.onOffer)
             socket.off('answer', listeners.onAnswer)
             socket.off('ice', listeners.onIce)
-            socket.off("willLeave", listeners.onWillLeave)
+            socket.off('willLeave', listeners.onWillLeave)
 
             socket.on('welcome', onWelcome)
             socket.on('offer', onOffer)
@@ -214,10 +155,7 @@ export default function Room() {
         setCameraOff((v) => !v)
     }
 
-    const handleCameraChange = async (e) => {
-        console.log(peerConnections)
-        const value = e.currentTarget.value
-        console.log(value)
+    const handleCameraChange = async (value) => {
         await MediaServ.getMedia(value)
         Object.keys(peerConnections).forEach((k) => {
             const pc = peerConnections[k]
@@ -249,32 +187,12 @@ export default function Room() {
                     />
                 ))}
             </div>
-            <div className={Styles.controlbar}>
-                <button onClick={handleMuteClick} className={Styles.controlbtn}>
-                    {muted ? 'UnMute' : 'Mute'}
-                </button>
-                <button
-                    onClick={handleCameraClick}
-                    className={Styles.controlbtn}
-                >
-                    {cameraOff ? 'Turn Camera On' : 'Turn Camera Off'}
-                </button>
-                <select
-                    ref={cameraSelectRef}
-                    onChange={async (e) => {
-                        await handleCameraChange(e)
-                    }}
-                    name="cameras"
-                    id="cameras"
-                    className={Styles.cameras}
-                >
-                    {cameraOptValues.map((label, k) => (
-                        <option value={label.value} key={k}>
-                            {label.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
+            <ControlBar cameraOptValues={cameraOptValues}
+            handleCameraChange={handleCameraChange}
+            handleCameraClick={handleCameraClick}
+            handleMuteClick={handleMuteClick}
+            muted={muted}
+            cameraOff={cameraOff} />
         </div>
     )
 }

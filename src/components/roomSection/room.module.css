@@ -17,7 +17,6 @@
     letter-spacing: 0.03em;
 }
 
-/* Peer Box */
 .peers {
     display: flex;
     justify-content: center;
@@ -25,108 +24,5 @@
     width: 80%;
     max-width: 900px;
     padding: 60px 0;
-}
-
-.peer__box {
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    background-color: aquamarine;
-    width: 400px;
-    height: 225px;
-    border-radius: 10px;
-    margin: 10px;
-}
-.peer__info {
-    position: absolute;
-    bottom: 0;
-    padding: 5px;
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    background-color: #eeeeee;
-    transform: translateY(50px);
-    transition: all 0.3s ease;
-    border-radius: 10px;
-}
-
-.peer__box:hover .peer__info {
-    transform: translateY(0);
-}
-
-.peer__profile {
-    display: flex;
-    align-items: center;
-}
-
-.peer__name {
-    margin: 0 8px;
-    font-weight: 500;
-    transform: scaleY(0.9);
-}
-
-.me {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    font-weight: bold;
-    width: 50px;
-    height: 50px;
-    color: white;
-    background-color: cornflowerblue;
-    z-index: 1;
-}
-
-.peer__speaking {
-    border: 2px solid #3aff44;
-}
-
-/* Temp attribute - testing video view form*/
-
-.peer__video img {
-    width: 100%;
-    transform: translateY(-100px);
-}
-
-.peer__profile img {
-    width: 22px;
-    border-radius: 50%;
-}
-
-.controlbar {
-    position: absolute;
-    bottom: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 800px;
-    padding: 20px;
-    background-color: black;
-    opacity: 0.1;
-    border-radius: 300px;
-    transition: all .1s linear;
-}
-.controlbar:hover{
-    opacity: 1;
-}
-
-.controlbtn, .cameras {
-    outline: none;
-    border: none;
-    padding: 15px;
-    font-weight: bold;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all .1s linear;
-    background-color: white;
-    margin: 0 30px;
-}
-
-.controlbtn:hover, .cameras:hover {
-    background-color:#0055df;
-}
+  }
+  
