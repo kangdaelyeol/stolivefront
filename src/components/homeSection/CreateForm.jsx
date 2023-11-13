@@ -23,7 +23,7 @@ export default function CreateForm({ setIsCreate, createRoom }) {
         const title = titleRef.current.value.trim()
         const description = desRef.current.value.trim()
         const category = categoryRef.current.value
-        const subCategory = subCategoryRef.current.value.trim()
+        const subCategory = subCategoryRef.current.value
         setFormData({
             title,
             description,

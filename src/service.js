@@ -39,6 +39,25 @@ export class dbService {
             return false
         }
     }
+
+    getRoomById = async (roomid) => {
+        try {
+            const result = await fetch(`${this.baseURL}/roominfo`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    roomid,
+                }),
+            })
+            if (!result) return false
+            return result
+        } catch (e) {
+            console.log(e)
+            return false
+        }
+    }
 }
 
 export class MediaService {

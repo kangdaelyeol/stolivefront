@@ -69,6 +69,7 @@ export default function Home({ DBService }) {
             ...data,
             userName: "usreName"
         }
+        console.log(submitData)
         DBService.createRoom(submitData).then(result => {
             console.log(result);
         })

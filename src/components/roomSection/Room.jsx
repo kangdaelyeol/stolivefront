@@ -4,7 +4,7 @@ import Styles from './room.module.css'
 import tempImg from '../../images/pimg.jpeg'
 import tempMyImg from '../../images/p_profile.jpeg'
 import io from 'socket.io-client'
-import { MediaService } from '../../service'
+import { MediaService, dbService } from '../../service'
 import { getListeners } from './listenerController'
 import PeerBox from './PeerBox'
 import ControlBar from './ControlBar'
@@ -21,7 +21,7 @@ const myData = {
 }
 // *** Socket io connection ***
 
-export default function Room() {
+export default function Room({ DBService }) {
     const { id } = useParams()
     const roomName = id
     // *** useState ***
@@ -142,12 +142,23 @@ export default function Room() {
         }
     }, [peerConnections])
 
+    // ** useEffect - isExist -> room Info
+    useEffect(() => {
+        ;(async () => {
+            const result = await DBService.getRoomById(roomName)
+            const data = await result.json();
+            console.log(roomName)
+            console.log(data)
+            
+        })()
+    }, [])
     const handleMuteClick = () => {
         myStream
             .getAudioTracks()
             .forEach((track) => (track.enabled = !track.enabled))
         setMuted((v) => !v)
     }
+
     const handleCameraClick = () => {
         myStream
             .getVideoTracks()
@@ -187,12 +198,14 @@ export default function Room() {
                     />
                 ))}
             </div>
-            <ControlBar cameraOptValues={cameraOptValues}
-            handleCameraChange={handleCameraChange}
-            handleCameraClick={handleCameraClick}
-            handleMuteClick={handleMuteClick}
-            muted={muted}
-            cameraOff={cameraOff} />
+            <ControlBar
+                cameraOptValues={cameraOptValues}
+                handleCameraChange={handleCameraChange}
+                handleCameraClick={handleCameraClick}
+                handleMuteClick={handleMuteClick}
+                muted={muted}
+                cameraOff={cameraOff}
+            />
         </div>
     )
 }
