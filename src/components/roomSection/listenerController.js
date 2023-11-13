@@ -7,6 +7,7 @@ export const getListeners = (
     iceQueue,
     setIceQueue,
     socket,
+    setConnectedList
 ) => {
     const onWelcome = async (senderId) => {
         // Welcome -> 처음 온 사람만 보냄
@@ -16,8 +17,8 @@ export const getListeners = (
         const offer = await peerConnection.createOffer()
         peerConnection.setLocalDescription(offer)
         setPeerConnections((v) => ({ ...v, [senderId]: peerConnection }))
-        console.log("await emit offer")
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        console.log('await emit offer')
+        await new Promise((resolve) => setTimeout(resolve, 1000))
         socket.emit('offer', offer, `${roomName}${senderId}`)
         console.log('sent the offer', roomName)
     }
@@ -94,6 +95,14 @@ export const getListeners = (
 
     function handleAddStream(data, senderId) {
         console.log('addStream', senderId, data)
+        const connectionInfo = {
+            senderId: `V_${senderId}`,
+            stream: data.stream,
+        }
+
+        setConnectedList(list => {
+            return [...list, {...connectionInfo}]
+        })
         // console.log('addStream for : ', senderId)
         // const peerFaceBox = document.createElement('div')
         // peerFaceBox.classList.add('peerface', `V_${senderId}`)

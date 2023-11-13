@@ -11,18 +11,8 @@ const MediaServ = new MediaService()
 
 const VIDEO_WIDTH = 400
 
-const PeerData = [
-    {
-        userName: 'dophin123',
-        profile:
-            'https://lh3.googleusercontent.com/a/ACg8ocI-3LrdNOhDIFId5_WXJHabTsFijFLobWNYrYEwLucb=s83-c-mo',
-    },
-    {
-        userName: 'dophin123',
-        profile:
-            'https://lh3.googleusercontent.com/a/ACg8ocI-3LrdNOhDIFId5_WXJHabTsFijFLobWNYrYEwLucb=s83-c-mo',
-    },
-]
+const tempProfile =
+    'https://lh3.googleusercontent.com/a/ACg8ocI-3LrdNOhDIFId5_WXJHabTsFijFLobWNYrYEwLucb=s83-c-mo'
 
 const myData = {
     userName: '강대렬',
@@ -45,6 +35,12 @@ const PeerBox = ({
         if (!videoRef.current) return
         videoRef.current.srcObject = myStream
     }, [myStream])
+
+    useEffect(() => {
+        if (!me && videoRef.current) {
+            videoRef.current.srcObject = video
+        }
+    }, [video])
     return (
         <div
             className={`${Styles.peer__box} ${
@@ -64,7 +60,15 @@ const PeerBox = ({
                         ></video>
                     </>
                 ) : (
-                    <img src={video} alt="video" />
+                    <>
+                        <video
+                            ref={videoRef}
+                            width={VIDEO_WIDTH}
+                            autoPlay
+                            playsInline
+                            className={Styles.myface}
+                        ></video>
+                    </>
                 )}
                 {/* {message? <Message /> : ""} */}
             </div>
@@ -107,6 +111,7 @@ export default function Room() {
         iceQueue,
         setIceQueue,
         socket,
+        setConnectedList,
     ) => {
         if (socket) {
             const [onWelcome, onOffer, onAnswer, onIce] = getListeners(
@@ -117,6 +122,7 @@ export default function Room() {
                 iceQueue,
                 setIceQueue,
                 socket,
+                setConnectedList,
             )
 
             socket.on('welcome', onWelcome)
@@ -155,6 +161,7 @@ export default function Room() {
                         iceQueue,
                         setIceQueue,
                         socket,
+                        setConnectedList,
                     )
                     socket.emit('join_room', id, socket.id, myData.userName)
                 })
@@ -165,9 +172,13 @@ export default function Room() {
         }
     }, [socket])
 
+    // ** useEffect - when peerConnections change -> need to reset EventListeners to make funcion to refer state changed
     useEffect(() => {
         if (socket) {
-            console.log("changed peerConnections -> reset Listeners", peerConnections)
+            console.log(
+                'changed peerConnections -> reset Listeners',
+                peerConnections,
+            )
             const [onWelcome, onOffer, onAnswer, onIce] = getListeners(
                 myStream,
                 roomName,
@@ -176,6 +187,7 @@ export default function Room() {
                 iceQueue,
                 setIceQueue,
                 socket,
+                setConnectedList,
             )
             socket.off('welcome', listeners.onWelcome)
             socket.off('offer', listeners.onOffer)
@@ -191,12 +203,24 @@ export default function Room() {
             socket.on('ice', onIce)
 
             setListeners({ onWelcome, onOffer, onAnswer, onIce })
-
         }
     }, [peerConnections])
 
-    const handleMuteClick = () => setMuted((v) => !v)
-    const handleCameraClick = () => setCameraOff((v) => !v)
+    const handleMuteClick = () => {
+        myStream
+            .getAudioTracks()
+            .forEach((track) => (track.enabled = !track.enabled))
+        setMuted((v) => {
+            return !v
+        })
+    }
+    const handleCameraClick = () =>
+        setCameraOff((v) => {
+            myStream
+                .getVideoTracks()
+                .forEach((track) => (track.enabled = !track.enabled))
+            return !v
+        })
 
     // 일단 peerbox 사이즈 임의로 16:9 (400 / 225)
     return (
@@ -206,21 +230,25 @@ export default function Room() {
                 {/* my video */}
                 <PeerBox {...myData} me myStream={myStream} />
                 {/* peer video */}
-                {PeerData.map((peerInfo, ind) => (
+                {connectedList.map((connection, ind) => (
                     <PeerBox
-                        {...peerInfo}
-                        video={tempImg}
+                        userName={'temp'}
+                        profile={tempProfile}
+                        video={connection.stream}
                         speaking={false}
                         key={ind}
                     />
                 ))}
             </div>
-            <div className="controlbar">
-                <button onClick={handleMuteClick} className="controlbtn">
-                    Mute
+            <div className={Styles.controlbar}>
+                <button onClick={handleMuteClick} className={Styles.controlbtn}>
+                    {muted ? 'UnMute' : 'Mute'}
                 </button>
-                <button onClick={handleCameraClick} className="controlbtn">
-                    Turn Camera Off
+                <button
+                    onClick={handleCameraClick}
+                    className={Styles.controlbtn}
+                >
+                    {cameraOff ? 'Turn Camera On' : 'Turn Camera Off'}
                 </button>
                 <select
                     ref={cameraSelectRef}
