@@ -210,17 +210,31 @@ export default function Room() {
         myStream
             .getAudioTracks()
             .forEach((track) => (track.enabled = !track.enabled))
-        setMuted((v) => {
-            return !v
+        setMuted((v) => !v)
+    }
+    const handleCameraClick = () => {
+        myStream
+            .getVideoTracks()
+            .forEach((track) => (track.enabled = !track.enabled))
+        setCameraOff((v) => !v)
+    }
+
+    const handleCameraChange = async (e) => {
+        console.log(peerConnections)
+        const value = e.currentTarget.value
+        console.log(value)
+        await MediaServ.getMedia(value)
+        Object.keys(peerConnections).forEach((k) => {
+            const pc = peerConnections[k]
+            if (pc) {
+                const videoTrack = myStream.getVideoTracks()[0]
+                const videoSender = pc
+                    .getSenders()
+                    .find((sender) => sender.track.kind === 'video')
+                videoSender.replaceTrack(videoTrack)
+            }
         })
     }
-    const handleCameraClick = () =>
-        setCameraOff((v) => {
-            myStream
-                .getVideoTracks()
-                .forEach((track) => (track.enabled = !track.enabled))
-            return !v
-        })
 
     // 일단 peerbox 사이즈 임의로 16:9 (400 / 225)
     return (
@@ -252,6 +266,9 @@ export default function Room() {
                 </button>
                 <select
                     ref={cameraSelectRef}
+                    onChange={async (e) => {
+                        await handleCameraChange(e)
+                    }}
                     name="cameras"
                     id="cameras"
                     className={Styles.cameras}
