@@ -10,7 +10,6 @@ export default function ControlBar({
 }) {
     const cameraSelectRef = useRef()
 
-
     const onCameraChange = async (e) => {
         const value = e.currentTarget.value
         await handleCameraChange(value)
@@ -26,9 +25,7 @@ export default function ControlBar({
             </button>
             <select
                 ref={cameraSelectRef}
-                onChange={async (e) => {
-                    await onCameraChange(e)
-                }}
+                onChange={onCameraChange}
                 name="cameras"
                 id="cameras"
                 className={Styles.cameras}

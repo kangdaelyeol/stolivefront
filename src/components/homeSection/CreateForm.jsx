@@ -9,12 +9,12 @@ export default function CreateForm({ setIsCreate, createRoom }) {
         category: '',
         subCategory: '',
     })
-    
+
     const titleRef = useRef()
     const desRef = useRef()
     const categoryRef = useRef()
     const subCategoryRef = useRef()
-
+    
     // Event methods
     const onEscapeClick = () => {
         setIsCreate(false)

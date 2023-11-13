@@ -1,30 +1,46 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import Styles from './room.module.css'
-import tempImg from '../../images/pimg.jpeg'
-import tempMyImg from '../../images/p_profile.jpeg'
-import io from 'socket.io-client'
-import { MediaService, dbService } from '../../service'
+import { useState, useEffect } from 'react'
 import { getListeners } from './listenerController'
-import PeerBox from './PeerBox'
-import ControlBar from './ControlBar'
-const SOCKET_SERVER_URL = 'http://localhost:8000'
+import { MediaService } from '../../service'
+
 const mediaServ = new MediaService()
 
-const tempProfile =
-    'https://lh3.googleusercontent.com/a/ACg8ocI-3LrdNOhDIFId5_WXJHabTsFijFLobWNYrYEwLucb=s83-c-mo'
+const setIoListener = (
+    myStream,
+    roomName,
+    peerConnections,
+    setPeerConnections,
+    iceQueue,
+    setIceQueue,
+    socket,
+    setConnectedList,
+) => {
+    if (socket) {
+        const [onWelcome, onOffer, onAnswer, onIce, onWillLeave] = getListeners(
+            myStream,
+            roomName,
+            peerConnections,
+            setPeerConnections,
+            iceQueue,
+            setIceQueue,
+            socket,
+            setConnectedList,
+        )
 
-const myData = {
-    userName: '강대렬',
-    profile: tempImg,
-    video: tempMyImg,
+        socket.on('welcome', onWelcome)
+
+        socket.on('offer', onOffer)
+
+        socket.on('answer', onAnswer)
+
+        socket.on('ice', onIce)
+
+        socket.on('willleave', onWillLeave)
+
+        setListeners({ onWelcome, onOffer, onAnswer, onIce, onWillLeave })
+    }
 }
-// *** Socket io connection ***
 
-export default function Room({ DBService }) {
-    const { id } = useParams()
-    const roomName = id
-    // *** useState ***
+export const useIo = () => {
     const [myStream, setMyStream] = useState(null)
     const [muted, setMuted] = useState(false)
     const [cameraOff, setCameraOff] = useState(false)
@@ -34,46 +50,6 @@ export default function Room({ DBService }) {
     const [iceQueue, setIceQueue] = useState([])
     const [socket, setSocket] = useState(null)
     const [listeners, setListeners] = useState({})
-
-    // IO Listener Initialize - when PeerConnections change
-
-    // setIoListener
-    const setIoListener = (
-        myStream,
-        roomName,
-        peerConnections,
-        setPeerConnections,
-        iceQueue,
-        setIceQueue,
-        socket,
-        setConnectedList,
-    ) => {
-        if (socket) {
-            const [onWelcome, onOffer, onAnswer, onIce, onWillLeave] =
-                getListeners(
-                    myStream,
-                    roomName,
-                    peerConnections,
-                    setPeerConnections,
-                    iceQueue,
-                    setIceQueue,
-                    socket,
-                    setConnectedList,
-                )
-
-            socket.on('welcome', onWelcome)
-
-            socket.on('offer', onOffer)
-
-            socket.on('answer', onAnswer)
-
-            socket.on('ice', onIce)
-
-            socket.on('willleave', onWillLeave)
-
-            setListeners({ onWelcome, onOffer, onAnswer, onIce, onWillLeave })
-        }
-    }
 
     // *** useEffect - GetMedia ***
     useEffect(() => {
@@ -134,15 +110,7 @@ export default function Room({ DBService }) {
         }
     }, [peerConnections])
 
-    // ** useEffect - isExist -> room Info
-    useEffect(() => {
-        ;(async () => {
-            const data = await DBService.getRoomById(roomName)
-            console.log(roomName)
-            console.log(data)
-        })()
-    }, [])
-
+    // handle ControlBar
     const handleMuteClick = () => {
         myStream
             .getAudioTracks()
@@ -170,33 +138,14 @@ export default function Room({ DBService }) {
             }
         })
     }
-
-    // 일단 peerbox 사이즈 임의로 16:9 (400 / 225)
-    return (
-        <div className={Styles.container}>
-            <div className={Styles.title}>정보보안기사 스터디</div>
-            <div className={Styles.peers}>
-                {/* my video */}
-                <PeerBox {...myData} me myStream={myStream} />
-                {/* peer video */}
-                {connectedList.map((connection, ind) => (
-                    <PeerBox
-                        userName={'temp'}
-                        profile={tempProfile}
-                        video={connection.stream}
-                        speaking={false}
-                        key={ind}
-                    />
-                ))}
-            </div>
-            <ControlBar
-                cameraOptValues={cameraOptValues}
-                handleCameraChange={handleCameraChange}
-                handleCameraClick={handleCameraClick}
-                handleMuteClick={handleMuteClick}
-                muted={muted}
-                cameraOff={cameraOff}
-            />
-        </div>
-    )
+    return [
+        myStream,
+        connectedList,
+        cameraOptValues,
+        muted,
+        cameraOff,
+        handleMuteClick,
+        handleCameraClick,
+        handleCameraChange,
+    ]
 }

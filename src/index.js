@@ -1,14 +1,12 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import { dbService } from './service';
-const REQUEST_URL = 'http://localhost:8000'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import './index.css'
+import App from './App'
+import { dbService } from './service'
 
-const roomDBService = new dbService(REQUEST_URL);
+const REQUEST_URL = 'https://a8f9-122-202-238-228.ngrok-free.app'
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-    <App DBService={roomDBService}/>
-);
+const roomDBService = new dbService(REQUEST_URL)
 
+const root = ReactDOM.createRoot(document.getElementById('root'))
+root.render(<App DBService={roomDBService} />)

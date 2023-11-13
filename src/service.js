@@ -71,6 +71,7 @@ export class MediaService {
             if (!deviceId) {
                 await this.getCameras()
             }
+            
         } catch (e) {
             console.log('no getMedia', e)
             return e
