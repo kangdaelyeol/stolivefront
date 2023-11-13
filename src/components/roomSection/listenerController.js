@@ -7,7 +7,7 @@ export const getListeners = (
     iceQueue,
     setIceQueue,
     socket,
-    setConnectedList
+    setConnectedList,
 ) => {
     const onWelcome = async (senderId) => {
         // Welcome -> 처음 온 사람만 보냄
@@ -62,6 +62,11 @@ export const getListeners = (
         peerConnections[`${senderName}`].addIceCandidate(ice)
     }
 
+    const onWillLeave = (senderId) => {
+        console.log(senderId, 'leave')
+        handleRemoveStream(senderId)
+    }
+
     function getRTCPeerConnection(senderId) {
         const peerConnection = new RTCPeerConnection({
             iceServers: [
@@ -100,23 +105,27 @@ export const getListeners = (
             stream: data.stream,
         }
 
-        setConnectedList(list => {
-            return [...list, {...connectionInfo}]
+        setConnectedList((list) => {
+            return [...list, { ...connectionInfo }]
         })
-        // console.log('addStream for : ', senderId)
-        // const peerFaceBox = document.createElement('div')
-        // peerFaceBox.classList.add('peerface', `V_${senderId}`)
-        // const peerVideo = document.createElement('video')
-        // peerVideo.setAttribute('autoplay', 'true')
-        // peerVideo.setAttribute('playsinline', 'true')
-        // peerVideo.setAttribute('width', MAX_OFFSET)
-        // peerVideo.setAttribute('height', MAX_OFFSET)
-        // peerVideo.srcObject = data.stream
-        // peerFaceBox.appendChild(peerVideo)
-        // streamBox.appendChild(peerFaceBox)
+    }
+
+    function handleRemoveStream(senderId) {
+        setPeerConnections((v) => {
+            const newPCs = { ...v }
+            delete newPCs[senderId]
+            return newPCs
+        })
+        setConnectedList((v) => {
+            const newCL = []
+            v.forEach((l) => {
+                if (l.senderId !== `V_${senderId}`) newCL.push({ ...v })
+            })
+            return newCL
+        })
     }
 
     // define dependency & listner
 
-    return [onWelcome, onOffer, onAnswer, onIce]
+    return [onWelcome, onOffer, onAnswer, onIce, onWillLeave]
 }

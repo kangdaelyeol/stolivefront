@@ -114,7 +114,7 @@ export default function Room() {
         setConnectedList,
     ) => {
         if (socket) {
-            const [onWelcome, onOffer, onAnswer, onIce] = getListeners(
+            const [onWelcome, onOffer, onAnswer, onIce, onWillLeave] = getListeners(
                 myStream,
                 roomName,
                 peerConnections,
@@ -133,12 +133,9 @@ export default function Room() {
 
             socket.on('ice', onIce)
 
-            setListeners({ onWelcome, onOffer, onAnswer, onIce })
-
-            socket.on('willleave', (senderId) => {
-                console.log(senderId, 'leave')
-                // handleRemoveStream(senderId)
-            })
+            socket.on('willleave', onWillLeave)
+            
+            setListeners({ onWelcome, onOffer, onAnswer, onIce, onWillLeave })
         }
     }
 
@@ -179,7 +176,7 @@ export default function Room() {
                 'changed peerConnections -> reset Listeners',
                 peerConnections,
             )
-            const [onWelcome, onOffer, onAnswer, onIce] = getListeners(
+            const [onWelcome, onOffer, onAnswer, onIce, onWillLeave] = getListeners(
                 myStream,
                 roomName,
                 peerConnections,
@@ -193,16 +190,14 @@ export default function Room() {
             socket.off('offer', listeners.onOffer)
             socket.off('answer', listeners.onAnswer)
             socket.off('ice', listeners.onIce)
+            socket.off("willLeave", listeners.onWillLeave)
 
             socket.on('welcome', onWelcome)
-
             socket.on('offer', onOffer)
-
             socket.on('answer', onAnswer)
-
             socket.on('ice', onIce)
-
-            setListeners({ onWelcome, onOffer, onAnswer, onIce })
+            socket.on('willLeave', onWillLeave)
+            setListeners({ onWelcome, onOffer, onAnswer, onIce, onWillLeave })
         }
     }, [peerConnections])
 
