@@ -4,6 +4,7 @@ import Room from './components/roomSection/Room'
 import Header from './components/Header'
 import Home from './components/homeSection/Home'
 import Login from './components/Login'
+import Signup from './components/Signup'
 
 const App = ({ DBService }) => {
     return (
@@ -15,7 +16,8 @@ const App = ({ DBService }) => {
                     element={<Room DBService={DBService} />}
                     path="/room/:id"
                 />
-                <Route element={<Login />} path='/login' />
+                <Route element={<Login />} path="/login" />
+                <Route element={<Signup />} path="/signup" />
             </Routes>
         </BrowserRouter>
     )
