@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
-import { getListeners, setIoListener } from './listenerController'
 import { MediaService } from './mediaService'
+import ListenerService from './listenerController'
 import io from 'socket.io-client'
+import MediaControlService from './mediaControlService'
 
 const mediaServ = new MediaService()
+const listenerService = new ListenerService()
+const mediaControlService = new MediaControlService(mediaServ)
 
 export const useIo = (URL, roomName, userName) => {
     const [myStream, setMyStream] = useState(null)
@@ -16,6 +19,17 @@ export const useIo = (URL, roomName, userName) => {
     const [socket, setSocket] = useState(null)
     const [listeners, setListeners] = useState({})
 
+    mediaControlService.setProps(
+        myStream,
+        peerConnections,
+        setMuted,
+        setCameraOff,
+    )
+
+    // get control methods for media controlling
+    const [handleMuteClick, handleCameraClick, handleCameraChange] =
+        mediaControlService.getController()
+
     // *** useEffect - GetMedia ***
     useEffect(() => {
         if (!socket) {
@@ -27,9 +41,7 @@ export const useIo = (URL, roomName, userName) => {
             socket.on('connect', async () => {
                 console.log('socket connection')
                 const [myStream, camerasSelect] = await mediaServ.initCall()
-                setMyStream(myStream)
-                setCameraOptValues([...camerasSelect])
-                setIoListener(
+                listenerService.setProps(
                     myStream,
                     roomName,
                     peerConnections,
@@ -38,8 +50,12 @@ export const useIo = (URL, roomName, userName) => {
                     setIceQueue,
                     socket,
                     setConnectedList,
+                    listeners,
                     setListeners,
                 )
+                setMyStream(myStream)
+                setCameraOptValues([...camerasSelect])
+                listenerService.setIoListener()
                 socket.emit('join_room', roomName, socket.id, userName)
             })
             socket.on('error', (e) => {
@@ -50,11 +66,8 @@ export const useIo = (URL, roomName, userName) => {
 
     // ** useEffect - when peerConnections change -> need to reset EventListeners to make funcion to refer state changed
     useEffect(() => {
-        if (!socket) {
-            return
-        }
-
-        const [onWelcome, onOffer, onAnswer, onIce, onWillLeave] = getListeners(
+        if (!socket) return
+        listenerService.setProps(
             myStream,
             roomName,
             peerConnections,
@@ -63,53 +76,16 @@ export const useIo = (URL, roomName, userName) => {
             setIceQueue,
             socket,
             setConnectedList,
+            listeners,
+            setListeners,
         )
-        socket.off('welcome', listeners.onWelcome)
-        socket.off('offer', listeners.onOffer)
-        socket.off('answer', listeners.onAnswer)
-        socket.off('ice', listeners.onIce)
-        socket.off('willLeave', listeners.onWillLeave)
-
-        socket.on('welcome', onWelcome)
-        socket.on('offer', onOffer)
-        socket.on('answer', onAnswer)
-        socket.on('ice', onIce)
-        socket.on('willLeave', onWillLeave)
-        setListeners({ onWelcome, onOffer, onAnswer, onIce, onWillLeave })
+        listenerService.resetIolistener()
     }, [peerConnections])
 
-    // handle ControlBar
-    const handleMuteClick = () => {
-        myStream
-            .getAudioTracks()
-            .forEach((track) => (track.enabled = !track.enabled))
-        setMuted((v) => !v)
-    }
-
-    const handleCameraClick = () => {
-        myStream
-            .getVideoTracks()
-            .forEach((track) => (track.enabled = !track.enabled))
-        setCameraOff((v) => !v)
-    }
-
-    const handleCameraChange = async (value) => {
-        await mediaServ.getMedia(value)
-        Object.keys(peerConnections).forEach((k) => {
-            const pc = peerConnections[k]
-            if (!pc) {
-                return
-            }
-            const videoTrack = myStream.getVideoTracks()[0]
-            const videoSender = pc
-                .getSenders()
-                .find((sender) => sender.track.kind === 'video')
-            videoSender.replaceTrack(videoTrack)
-        })
-    }
     return [
         myStream,
         connectedList,
+        // for ControlBar Component
         {
             cameraOptValues,
             muted,

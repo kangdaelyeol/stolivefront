@@ -1,3 +1,73 @@
+import RTCProcessService from './RTCProcess'
+
+export default class ListenerService {
+    setProps = (
+        myStream,
+        roomName,
+        peerConnections,
+        setPeerConnections,
+        iceQueue,
+        setIceQueue,
+        socket,
+        setConnectedList,
+        listeners,
+        setListeners,
+    ) => {
+        this.myStream = myStream
+        this.roomName = roomName
+        this.peerConnections = peerConnections
+        this.setPeerConnections = setPeerConnections
+        this.iceQueue = iceQueue
+        this.setIceQueue = setIceQueue
+        this.socket = socket
+        this.setConnectedList = setConnectedList
+        this.listeners = listeners
+        this.setListeners = setListeners
+        this.RTCService = new RTCProcessService(
+            myStream,
+            roomName,
+            peerConnections,
+            setPeerConnections,
+            iceQueue,
+            setIceQueue,
+            socket,
+            setConnectedList,
+            // except for lister, setListener
+        )
+        console.log(myStream)
+    }
+    // ** setIoListener **
+    setIoListener = () => {
+        if (!this.socket) return
+        const [onWelcome, onOffer, onAnswer, onIce, onWillLeave] =
+            this.RTCService.getListeners()
+        this.socket.on('welcome', onWelcome)
+        this.socket.on('offer', onOffer)
+        this.socket.on('answer', onAnswer)
+        this.socket.on('ice', onIce)
+        this.socket.on('willleave', onWillLeave)
+
+        this.setListeners({
+            onWelcome,
+            onOffer,
+            onAnswer,
+            onIce,
+            onWillLeave,
+        })
+    }
+
+    // ** resetIoListner **
+    resetIolistener = () => {
+        this.socket.off('welcome', this.listeners.onWelcome)
+        this.socket.off('offer', this.listeners.onOffer)
+        this.socket.off('answer', this.listeners.onAnswer)
+        this.socket.off('ice', this.listeners.onIce)
+        this.socket.off('willLeave', this.listeners.onWillLeave)
+
+        this.setIoListener()
+    }
+}
+
 // 일단 Welcome, Offer, Answer, Ice 까지만 반환 해보게잉
 export const getListeners = (
     myStream,
@@ -130,7 +200,6 @@ export const getListeners = (
     return [onWelcome, onOffer, onAnswer, onIce, onWillLeave]
 }
 
-
 export const setIoListener = (
     myStream,
     roomName,
@@ -155,15 +224,42 @@ export const setIoListener = (
         )
 
         socket.on('welcome', onWelcome)
-
         socket.on('offer', onOffer)
-
         socket.on('answer', onAnswer)
-
         socket.on('ice', onIce)
-
         socket.on('willleave', onWillLeave)
 
         setListeners({ onWelcome, onOffer, onAnswer, onIce, onWillLeave })
     }
+}
+
+export const resetIolistener = (
+    myStream,
+    roomName,
+    peerConnections,
+    setPeerConnections,
+    iceQueue,
+    setIceQueue,
+    socket,
+    setConnectedList,
+    listeners,
+    setListeners,
+) => {
+    socket.off('welcome', listeners.onWelcome)
+    socket.off('offer', listeners.onOffer)
+    socket.off('answer', listeners.onAnswer)
+    socket.off('ice', listeners.onIce)
+    socket.off('willLeave', listeners.onWillLeave)
+
+    setIoListener(
+        myStream,
+        roomName,
+        peerConnections,
+        setPeerConnections,
+        iceQueue,
+        setIceQueue,
+        socket,
+        setConnectedList,
+        setListeners,
+    )
 }
