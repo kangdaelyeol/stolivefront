@@ -129,3 +129,41 @@ export const getListeners = (
 
     return [onWelcome, onOffer, onAnswer, onIce, onWillLeave]
 }
+
+
+export const setIoListener = (
+    myStream,
+    roomName,
+    peerConnections,
+    setPeerConnections,
+    iceQueue,
+    setIceQueue,
+    socket,
+    setConnectedList,
+    setListeners,
+) => {
+    if (socket) {
+        const [onWelcome, onOffer, onAnswer, onIce, onWillLeave] = getListeners(
+            myStream,
+            roomName,
+            peerConnections,
+            setPeerConnections,
+            iceQueue,
+            setIceQueue,
+            socket,
+            setConnectedList,
+        )
+
+        socket.on('welcome', onWelcome)
+
+        socket.on('offer', onOffer)
+
+        socket.on('answer', onAnswer)
+
+        socket.on('ice', onIce)
+
+        socket.on('willleave', onWillLeave)
+
+        setListeners({ onWelcome, onOffer, onAnswer, onIce, onWillLeave })
+    }
+}
