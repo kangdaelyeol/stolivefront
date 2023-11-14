@@ -12,18 +12,22 @@ export default function Header() {
     }
     return (
         <div className={Styles.container}>
-            <div className={Styles.container__border}></div>
-            <div className={Styles.left} onClick={onTitleClick}>
-                <span className={Styles.title}>STORLIVE</span>
+            <div className={Styles.header__border}>
+                <div className={Styles.border}> </div>
             </div>
-            <div className={Styles.right}>
-                <div className={Styles.profile}>
-                    <img
-                        src={profileURL}
-                        alt=""
-                        className={Styles.profile__image}
-                    />
-                    <span className={Styles.name}>User</span>
+            <div className={Styles.header__display}>
+                <div className={Styles.left} onClick={onTitleClick}>
+                    <span className={Styles.title}>STORLIVE</span>
+                </div>
+                <div className={Styles.right}>
+                    <div className={Styles.profile}>
+                        <img
+                            src={profileURL}
+                            alt=""
+                            className={Styles.profile__image}
+                        />
+                        <span className={Styles.name}>User</span>
+                    </div>
                 </div>
             </div>
         </div>

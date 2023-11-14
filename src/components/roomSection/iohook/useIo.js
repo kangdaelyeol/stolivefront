@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { MediaService } from './mediaService'
-import ListenerService from './listenerController'
+import ListenerService from './listenerService'
 import io from 'socket.io-client'
 import MediaControlService from './mediaControlService'
 

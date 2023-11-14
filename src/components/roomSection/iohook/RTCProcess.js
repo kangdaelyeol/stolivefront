@@ -79,7 +79,7 @@ export default class RTCProcessService {
         this.handleRemoveStream(senderId)
     }
 
-    getRTCPeerConnection(senderId) {
+    getRTCPeerConnection = (senderId) => {
         const peerConnection = new RTCPeerConnection({
             iceServers: [
                 {
@@ -138,6 +138,12 @@ export default class RTCProcessService {
     }
 
     getListeners = () => {
-      return [this.onWelcome, this.onOffer, this.onAnswer, this.onIce, this.onWillLeave]
+        return [
+            this.onWelcome,
+            this.onOffer,
+            this.onAnswer,
+            this.onIce,
+            this.onWillLeave,
+        ]
     }
 }

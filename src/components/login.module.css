@@ -1,0 +1,127 @@
+.container {
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    padding-top: 35px;
+    display: flex;
+}
+
+.left {
+    height: calc(100vh - 35px);
+    overflow: hidden;
+}
+
+.bgimg {
+    height: calc(100vh - 35px);
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    padding: 0 5vw;
+    justify-content: center;
+    flex-grow: 1;
+    min-width: 400px;
+}
+
+.login__container,
+.login__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.login__input {
+    width: 100%;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #8f908e;
+    padding: 3px;
+    margin-bottom: 15px;
+}
+
+.login__input::placeholder {
+  font-size: 15px;
+  font-weight: bold;
+  transform: scaleY(.95);
+}
+
+.login__input:nth-child(1) {
+    margin-bottom: 30px;
+}
+
+.login__btn {
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: #1876d2;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.login__btn:hover {
+  background-color: #0867c7;
+}
+
+.alert__left {
+  padding: 0 10px;
+}
+
+.alert {
+    display: flex;
+    padding: 10px;
+    border: 1px solid #dc524f;
+    border-radius: 5px;
+}
+
+.alert__icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #dc524f;
+    color: #dc524f;
+    font-weight: bold;
+    font-size: 13px;
+    border-radius: 50%;
+    width: 17px;
+    height: 17px;
+}
+
+.alert__title {
+  font-size: 13px;
+  line-height: 22px;
+  font-weight: bold;
+  color: #794442;
+}
+
+.signupbtn {
+  padding: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #dc524f;
+  border-radius: 4px;
+  color: #dc524f;
+  font-weight: bold;
+  font-size: 14px;
+  margin: 5px 0;
+  cursor: pointer;
+}
+

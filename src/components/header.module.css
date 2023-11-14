@@ -1,18 +1,36 @@
 .container {
     position: relative;
+    top:0;
+    left: 0;
     display: flex;
-    padding: 5px;
     height: 35px;
+    background-color: white;
 }
 
-.container__border {
+.header__border {
     position: absolute;
-    height: 100%;
+    top:0;
+    left: 0;
+    width: 100vw;
+    height: 120%;
+    overflow-x: hidden;
+}
+
+.border {
+    position: absolute;
+    height: 80%;
     width: 150%;
     top: 0;
     left: -20%;
     box-shadow: 0px 8px 10px -10px;
-    z-index: -1;
+}
+
+.header__display{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+    z-index: 1;
 }
 
 .left,
@@ -20,6 +38,7 @@
     display: flex;
     align-items: center;
     width: 50%;
+    flex-grow: 1;
 }
 
 .right {
@@ -30,6 +49,7 @@
     margin-left: 5px;
     font-weight: bold;
     font-size: 20px;
+    cursor: pointer;
 }
 
 .profile {

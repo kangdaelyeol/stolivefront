@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Room from './components/roomSection/Room'
 import Header from './components/Header'
 import Home from './components/homeSection/Home'
+import Login from './components/Login'
 
 const App = ({ DBService }) => {
     return (
@@ -14,6 +15,7 @@ const App = ({ DBService }) => {
                     element={<Room DBService={DBService} />}
                     path="/room/:id"
                 />
+                <Route element={<Login />} path='/login' />
             </Routes>
         </BrowserRouter>
     )
