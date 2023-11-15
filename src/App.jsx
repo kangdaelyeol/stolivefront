@@ -6,7 +6,7 @@ import Home from './components/homeSection/Home'
 import Login from './components/Login'
 import Signup from './components/Signup'
 
-const App = ({ DBService }) => {
+const App = ({ DBService, MongoService }) => {
     return (
         <BrowserRouter>
             <Header />
@@ -17,7 +17,10 @@ const App = ({ DBService }) => {
                     path="/room/:id"
                 />
                 <Route element={<Login />} path="/login" />
-                <Route element={<Signup />} path="/signup" />
+                <Route
+                    element={<Signup MongoService={MongoService} />}
+                    path="/signup"
+                />
             </Routes>
         </BrowserRouter>
     )

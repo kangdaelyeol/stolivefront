@@ -44,3 +44,22 @@ export class DBService {
         return result;
     }
 }
+
+export class MongoService {
+    constructor(baseURL) {
+        this.http = new HttpReq(baseURL)
+    }
+    
+    createUser = async (data) => {
+        const result = await this.http.postFetchReq('createuser', {data})
+        return result
+    }
+
+    updateUser = async (data) => {
+        const result = await this.http.postFetchReq("updateuser", {data})
+    }
+
+    deleteUser = async (data) => {
+        const result = await this.http.postFetchReq("deleteuser", {data})
+    }
+}

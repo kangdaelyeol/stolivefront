@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Styles from './signup.module.css'
 
-export default function Signup() {
+export default function Signup({ MongoService }) {
     // ** useState to change form Value
     const [formVal, setFormVal] = useState({
-        userName: '',
-        nickName: '',
-        pw: '',
-        pw2: '',
-        hb: '',
-        age: '',
+        userName: '1',
+        nickName: '1',
+        pw: '1',
+        pw2: '1',
+        hb: '1',
+        age: '1',
+        email: '1@1.1',
     })
     // ** useEffect to check isLogin
     useEffect(() => {
@@ -25,18 +26,57 @@ export default function Signup() {
     const hbRef = useRef()
     const ageRef = useRef()
 
-    const onFormSubmit = (e) => {
+    const onResetBtnClick = () => {
+        setFormVal({
+            userName: '',
+            nickName: '',
+            email: '',
+            pw: '',
+            pw2: '',
+            hb: '',
+            age: '',
+        })
+    }
+
+    const onFormSubmit = async (e) => {
         e.preventDefault()
+        // when pw doesn't match
+        if (formVal.pw !== formVal.pw2) {
+            return
+        }
+        // when typeof age, hb isn't Number
+        if (isNaN(Number(formVal.hb)) || isNaN(Number(formVal.age))) {
+            alert('학번 이름 잘 써줘용')
+            return
+        }
+        const submitData = { ...formVal }
+        delete submitData.pw2
+
+        const result = await MongoService.createUser(submitData)
+        console.log(result)
+        switch (result.type) {
+            case 'success':
+                // when created
+                // session정보 갱신 -> 바로 로그인
+                break
+            case 'error':
+                // when error
+                const dpKeywords = Object.keys(result.data.keyPattern).join(' ')
+                alert(`${dpKeywords} 홀리싯`)
+                break
+            default:
+                throw new Error('홀리싯 Mongoose Error')
+        }
     }
     console.log(formVal)
     const onFormChange = (e) => {
         const inputName = e.currentTarget.name
-        const inputVal = e.currentTarget.value;
-        setFormVal(v => {
-          return {
-            ...v,
-            [inputName] : inputVal
-          }
+        const inputVal = e.currentTarget.value
+        setFormVal((v) => {
+            return {
+                ...v,
+                [inputName]: inputVal,
+            }
         })
     }
     return (
@@ -55,6 +95,7 @@ export default function Signup() {
                     <input
                         type="text"
                         name="nickName"
+                        value={formVal.nickName}
                         className={Styles.signup__input}
                         placeholder="닉네임"
                         onChange={onFormChange}
@@ -62,6 +103,7 @@ export default function Signup() {
                     <input
                         type="password"
                         name="pw"
+                        value={formVal.pw}
                         className={Styles.signup__input}
                         placeholder="비밀번호"
                         onChange={onFormChange}
@@ -69,6 +111,7 @@ export default function Signup() {
                     <input
                         type="password"
                         name="pw2"
+                        value={formVal.pw2}
                         className={Styles.signup__input}
                         placeholder="비밀번호 확인"
                         onChange={onFormChange}
@@ -76,6 +119,7 @@ export default function Signup() {
                     <input
                         type="email"
                         name="email"
+                        value={formVal.email}
                         className={Styles.signup__input}
                         placeholder="이메일"
                         onChange={onFormChange}
@@ -84,6 +128,7 @@ export default function Signup() {
                         <input
                             type="text"
                             name="hb"
+                            value={formVal.hb}
                             className={Styles.signup__input}
                             placeholder="학번"
                             onChange={onFormChange}
@@ -91,6 +136,7 @@ export default function Signup() {
                         <input
                             type="text"
                             name="age"
+                            value={formVal.age}
                             className={Styles.signup__input}
                             placeholder="나이"
                             onChange={onFormChange}
@@ -102,7 +148,10 @@ export default function Signup() {
                             className={`${Styles.signupbtn} ${Styles.btn}`}
                             value="ㅎㄹㅅ"
                         />
-                        <div className={`${Styles.clearbtn} ${Styles.btn}`}>
+                        <div
+                            onClick={onResetBtnClick}
+                            className={`${Styles.clearbtn} ${Styles.btn}`}
+                        >
                             초기화
                         </div>
                     </div>
