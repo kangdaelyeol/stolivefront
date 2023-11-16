@@ -3,12 +3,13 @@ class HttpReq {
         this.baseURL = baseURL
     }
 
-    postFetchReq = async (reqURL, body) => {
+    postFetchReq = async (reqURL, body, headers = {}) => {
         try {
             const result = await fetch(`${this.baseURL}/${reqURL}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    ...headers,
                 },
                 body: body ? JSON.stringify(body) : null,
             })
@@ -40,8 +41,8 @@ export class DBService {
     }
 
     getRoomById = async (roomid) => {
-        const result = await this.http.postFetchReq('roominfo',{roomid})
-        return result;
+        const result = await this.http.postFetchReq('roominfo', { roomid })
+        return result
     }
 }
 
@@ -49,17 +50,35 @@ export class MongoService {
     constructor(baseURL) {
         this.http = new HttpReq(baseURL)
     }
-    
+
     createUser = async (data) => {
-        const result = await this.http.postFetchReq('createuser', {data})
+        const result = await this.http.postFetchReq('createuser', { data })
         return result
     }
 
     updateUser = async (data) => {
-        const result = await this.http.postFetchReq("updateuser", {data})
+        const result = await this.http.postFetchReq('updateuser', { data })
     }
 
     deleteUser = async (data) => {
-        const result = await this.http.postFetchReq("deleteuser", {data})
+        const result = await this.http.postFetchReq('deleteuser', { data })
+    }
+
+    login = async (data) => {
+        const result = await this.http.postFetchReq('login', { data })
+        return result
+    }
+}
+
+export class AuthService {
+    constructor(baseURL) {
+        this.http = new HttpReq(baseURL)
+    }
+
+    checkJWT = async (token) => {
+        const result = await this.http.postFetchReq('checkjwt', '', {
+            Authorization: `Bearer ${token}`,
+        })
+        return result
     }
 }

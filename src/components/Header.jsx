@@ -5,7 +5,7 @@ import Styles from './header.module.css'
 const profileURL =
     'https://lh3.googleusercontent.com/a/ACg8ocI-3LrdNOhDIFId5_WXJHabTsFijFLobWNYrYEwLucb=s83-c-mo'
 
-export default function Header() {
+export default function Header({ login }) {
     const navigate = useNavigate()
     const onTitleClick = (e) => {
         navigate('/')
@@ -22,11 +22,13 @@ export default function Header() {
                 <div className={Styles.right}>
                     <div className={Styles.profile}>
                         <img
-                            src={profileURL}
+                            src={login.status ? login.data.profile : profileURL}
                             alt=""
                             className={Styles.profile__image}
                         />
-                        <span className={Styles.name}>User</span>
+                        <span className={Styles.name}>
+                            {login.status ? login.data.nickName : 'Guest'}
+                        </span>
                     </div>
                 </div>
             </div>

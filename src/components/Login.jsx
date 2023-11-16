@@ -1,10 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Styles from './login.module.css'
 import loginPgImg from '../images/login_pg_img.png'
+import useLogin from './roomSection/useLogin'
 
-export default function Login() {
+export default function Login({ login, setLogin, MongoService, AuthService }) {
+    const navigate = useNavigate()
     const [inputVal, setInputVal] = useState({
-        username: '',
+        userName: '',
         password: '',
     })
 
@@ -12,20 +15,31 @@ export default function Login() {
     const userNameRef = useRef()
     const pwRef = useRef()
 
-    // ** useEffect: check isLogin
-    useEffect(() => {
-        // login Check Process
-    }, [])
+    // ** useEffect: check Login Status by checking and verifying JWT
+    useLogin(setLogin)
 
-    const onFormSubmit = (e) => {
+    const onFormSubmit = async (e) => {
         e.preventDefault()
-       
+
+        const result = await MongoService.login({ ...inputVal })
+        if (!result.status) {
+            return
+            // when Login false
+        }
+
+        setLogin({
+            status: true,
+            data: { ...result.data },
+        })
+
+        localStorage.setItem('JWT', result.jwt)
+        navigate('/home')
     }
 
     const onInputChange = (e) => {
-      const userNameVal = userNameRef.current.value
-      const pwVal = pwRef.current.value
-      setInputVal({ username: userNameVal, password: pwVal })
+        const userNameVal = userNameRef.current.value
+        const pwVal = pwRef.current.value
+        setInputVal({ userName: userNameVal, password: pwVal })
     }
 
     return (
@@ -45,7 +59,7 @@ export default function Login() {
                             className={Styles.login__input}
                             placeholder="아이디"
                             ref={userNameRef}
-                            value={inputVal.username}
+                            value={inputVal.userName}
                             onChange={onInputChange}
                         />
                         <input
