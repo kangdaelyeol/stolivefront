@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Styles from './login.module.css'
 import loginPgImg from '../images/login_pg_img.png'
-import useLogin from './roomSection/useLogin'
+import useLogin from '../hooks/useLogin'
 
 export default function Login({ login, setLogin, MongoService, AuthService }) {
     const navigate = useNavigate()

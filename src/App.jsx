@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Room from './components/roomSection/Room'
-import Header from './components/Header'
+import Header from './components/headerSection/Header'
 import Home from './components/homeSection/Home'
 import Login from './components/Login'
 import Signup from './components/Signup'

@@ -1,15 +1,26 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import Styles from './header.module.css'
-
-const profileURL =
-    'https://lh3.googleusercontent.com/a/ACg8ocI-3LrdNOhDIFId5_WXJHabTsFijFLobWNYrYEwLucb=s83-c-mo'
+import pImg from '../../images/pimg.jpeg'
+import ProfileModal from "./ProfileModal"
 
 export default function Header({ login }) {
+    const [modal, setModal] = useState(false);
     const navigate = useNavigate()
-    const onTitleClick = (e) => {
+    const onTitleClick = () => {
         navigate('/')
     }
+
+    const onProfileClick = () => {
+        setModal(v => !v)
+    }
+    
+    const profileUrl = login.status
+        ? login.data.profile === 'None'
+            ? pImg
+            : login.data.profile
+        : pImg
+
     return (
         <div className={Styles.container}>
             <div className={Styles.header__border}>
@@ -20,9 +31,10 @@ export default function Header({ login }) {
                     <span className={Styles.title}>STORLIVE</span>
                 </div>
                 <div className={Styles.right}>
-                    <div className={Styles.profile}>
+                    {modal? <ProfileModal user={login.data} setModal={setModal}/> : ""}
+                    <div className={Styles.profile} onClick={onProfileClick}>
                         <img
-                            src={login.status ? login.data.profile : profileURL}
+                            src={profileUrl}
                             alt=""
                             className={Styles.profile__image}
                         />
