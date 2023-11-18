@@ -42,6 +42,8 @@ export default function Home({ login, setLogin, DBService }) {
     const navigate = useNavigate()
     const [roomData, isLoading, setRefresh] = useGetRooms(DBService) 
 
+    // useLoading
+
     useLogin(setLogin)
     // 대충 가공 해보기 -> 전체 카테고리 / 스터디 ....
     // roomData는 서버에서 구분해서 줘도 되고, 여기서 다 받아온담 가공해서 따로 해도 되고

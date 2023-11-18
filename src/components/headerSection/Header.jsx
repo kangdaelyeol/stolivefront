@@ -4,11 +4,11 @@ import Styles from './header.module.css'
 import pImg from '../../images/pimg.jpeg'
 import ProfileModal from "./ProfileModal"
 
-export default function Header({ login }) {
+export default function Header({ login, setLogin }) {
     const [modal, setModal] = useState(false);
     const navigate = useNavigate()
     const onTitleClick = () => {
-        navigate('/')
+        navigate('/home')
     }
 
     const onProfileClick = () => {
@@ -31,7 +31,7 @@ export default function Header({ login }) {
                     <span className={Styles.title}>STORLIVE</span>
                 </div>
                 <div className={Styles.right}>
-                    {modal? <ProfileModal user={login.data} setModal={setModal}/> : ""}
+                    {modal && login.status ? <ProfileModal user={login.data} setModal={setModal} setLogin={setLogin}/> : ""}
                     <div className={Styles.profile} onClick={onProfileClick}>
                         <img
                             src={profileUrl}

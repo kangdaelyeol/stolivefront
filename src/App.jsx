@@ -11,7 +11,7 @@ const App = ({ DBService, MongoService, AuthService }) => {
 
     return (
         <BrowserRouter>
-            <Header login={login} />
+            <Header login={login} setLogin={setLogin} />
             <Routes>
                 <Route
                     element={
@@ -48,7 +48,6 @@ const App = ({ DBService, MongoService, AuthService }) => {
                     element={
                         <Signup
                             MongoService={MongoService}
-                            login={login}
                             setLogin={setLogin}
                         />
                     }

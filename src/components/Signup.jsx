@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Styles from './signup.module.css'
+import useLogin from '../hooks/useLogin'
 
 
 
-export default function Signup({ MongoService }) {
+export default function Signup({ MongoService, setLogin }) {
     // ** useState to change form Value
     const [formVal, setFormVal] = useState({
         userName: '1',
@@ -14,11 +15,8 @@ export default function Signup({ MongoService }) {
         age: '1',
         email: '1@1.1',
     })
-    // ** useEffect to check isLogin
-    useEffect(() => {
-        // check login process
-    }, [])
 
+    useLogin(setLogin)
     // ** useRef - refer to form input
     const userNameRef = useRef()
     const nickNameRef = useRef()

@@ -1,14 +1,26 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import pImg from '../../images/pimg.jpeg'
 import Styles from './profileModal.module.css'
 
-export default function ProfileModal({ user, setModal }) {
-  const onExitClick = () => {
-    setModal(false)
-  }
+export default function ProfileModal({ user, setModal, setLogin }) {
+    const navigate = useNavigate()
+    const onExitClick = () => {
+        setModal(false)
+    }
+    const onLogoutClick = () => {
+        localStorage.removeItem('JWT')
+        navigate('/login')
+        setModal(false)
+        setLogin({
+            status: false,
+        })
+    }
     return (
         <div className={Styles.container}>
-            <div onClick={onExitClick} className={Styles.exitbtn}>X</div>
+            <div onClick={onExitClick} className={Styles.exitbtn}>
+                X
+            </div>
             <div className={Styles.email}>{user.email}</div>
             <div className={Styles.profile}>
                 <img
@@ -24,7 +36,10 @@ export default function ProfileModal({ user, setModal }) {
                     <div className={Styles.icon}>+</div>
                     <span>계정 추가</span>
                 </div>
-                <div className={`${Styles.rightbtn} ${Styles.btn}`}>
+                <div
+                    onClick={onLogoutClick}
+                    className={`${Styles.rightbtn} ${Styles.btn}`}
+                >
                     <div className={Styles.icon}>X</div>
                     <span>로그아웃</span>
                 </div>

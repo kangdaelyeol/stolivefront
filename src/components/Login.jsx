@@ -3,26 +3,31 @@ import { useNavigate } from 'react-router-dom'
 import Styles from './login.module.css'
 import loginPgImg from '../images/login_pg_img.png'
 import useLogin from '../hooks/useLogin'
+import useLoading from '../hooks/useLoading'
 
 export default function Login({ login, setLogin, MongoService, AuthService }) {
     const navigate = useNavigate()
+    const userNameRef = useRef()
+    const pwRef = useRef()
     const [inputVal, setInputVal] = useState({
         userName: '',
         password: '',
     })
-
-    // ** useRef: refer to username, pw
-    const userNameRef = useRef()
-    const pwRef = useRef()
+    useLogin(setLogin)
+    const [setIsloading, LoginBtn] = useLoading(
+        <input type="submit" className={Styles.login__btn} value="ㅎㄹㅅ" />,
+        '100px',
+        "login..."
+    )
 
     // ** useEffect: check Login Status by checking and verifying JWT
-    useLogin(setLogin)
 
     const onFormSubmit = async (e) => {
         e.preventDefault()
-
+        setIsloading(true)
         const result = await MongoService.login({ ...inputVal })
         if (!result.status) {
+            setIsloading(false)
             return
             // when Login false
         }
@@ -31,6 +36,7 @@ export default function Login({ login, setLogin, MongoService, AuthService }) {
             status: true,
             data: { ...result.data },
         })
+        setIsloading(false)
 
         localStorage.setItem('JWT', result.jwt)
         navigate('/home')
@@ -70,11 +76,7 @@ export default function Login({ login, setLogin, MongoService, AuthService }) {
                             value={inputVal.password}
                             onChange={onInputChange}
                         />
-                        <input
-                            type="submit"
-                            className={Styles.login__btn}
-                            value="ㅎㄹㅅ"
-                        />
+                        <LoginBtn />
                     </form>
                 </div>
                 <div className={Styles.alert}>
