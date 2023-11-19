@@ -4,7 +4,7 @@ import Styles from './home.module.css'
 import Search from './Search.jsx'
 import RoomList from './RoomList.jsx'
 import CreateForm from './CreateForm.jsx'
-import LoadingSpinner from './LoadingSpinner.jsx'
+import LoadingSpinner from '../../hooks/LoadingSpinner.jsx'
 import useLogin from '../../hooks/useLogin.js'
 import useGetRooms from '../../hooks/useGetRooms.js'
 
@@ -38,13 +38,12 @@ const tempRoomData = [
 export default function Home({ login, setLogin, DBService }) {
     const [isCreate, setIsCreate] = useState(false)
 
-
     const navigate = useNavigate()
-    const [roomData, isLoading, setRefresh] = useGetRooms(DBService) 
+    const [roomData, isLoading, setRefresh] = useGetRooms(DBService)
 
     // useLoading
 
-    useLogin(setLogin)
+    useLogin(setLogin, "/home")
     // 대충 가공 해보기 -> 전체 카테고리 / 스터디 ....
     // roomData는 서버에서 구분해서 줘도 되고, 여기서 다 받아온담 가공해서 따로 해도 되고
 
@@ -54,7 +53,7 @@ export default function Home({ login, setLogin, DBService }) {
     }
 
     const onRefreshBtnClick = () => {
-        setRefresh(v => !v)
+        setRefresh((v) => !v)
     }
 
     const createRoom = (data) => {

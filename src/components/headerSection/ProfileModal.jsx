@@ -16,6 +16,11 @@ export default function ProfileModal({ user, setModal, setLogin }) {
             status: false,
         })
     }
+
+    const onManageClick = () => {
+        navigate('/edit')
+        setModal(false)
+    }
     return (
         <div className={Styles.container}>
             <div onClick={onExitClick} className={Styles.exitbtn}>
@@ -30,7 +35,9 @@ export default function ProfileModal({ user, setModal, setLogin }) {
                 <div className={Styles.profileedit}>e</div>
             </div>
             <div className={Styles.hello}>안녕하세요, {user.nickName}님.</div>
-            <div className={Styles.managebtn}>Storilve 계정 관리</div>
+            <div onClick={onManageClick} className={Styles.managebtn}>
+                Storilve 계정 관리
+            </div>
             <div className={Styles.btnbox}>
                 <div className={`${Styles.leftbtn} ${Styles.btn}`}>
                     <div className={Styles.icon}>+</div>

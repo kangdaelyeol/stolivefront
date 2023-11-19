@@ -5,7 +5,7 @@ import loginPgImg from '../images/login_pg_img.png'
 import useLogin from '../hooks/useLogin'
 import useLoading from '../hooks/useLoading'
 
-export default function Login({ login, setLogin, MongoService, AuthService }) {
+export default function Login({ login, setLogin, MongoService }) {
     const navigate = useNavigate()
     const userNameRef = useRef()
     const pwRef = useRef()
@@ -13,11 +13,11 @@ export default function Login({ login, setLogin, MongoService, AuthService }) {
         userName: '',
         password: '',
     })
-    useLogin(setLogin)
+    useLogin(setLogin, '/home')
     const [setIsloading, LoginBtn] = useLoading(
         <input type="submit" className={Styles.login__btn} value="ㅎㄹㅅ" />,
         '100px',
-        "login..."
+        'login...',
     )
 
     // ** useEffect: check Login Status by checking and verifying JWT

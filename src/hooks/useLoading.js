@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import LoadingSpinner from '../components/homeSection/LoadingSpinner'
+import LoadingSpinner from './LoadingSpinner'
 
 const useLoading = (Component, size, message) => {
     const DefaultComp = () => Component

@@ -5,6 +5,7 @@ import Header from './components/headerSection/Header'
 import Home from './components/homeSection/Home'
 import Login from './components/Login'
 import Signup from './components/Signup'
+import ProfileEdit from './components/ProfileEdit'
 
 const App = ({ DBService, MongoService, AuthService }) => {
     const [login, setLogin] = useState({ status: false })
@@ -26,9 +27,9 @@ const App = ({ DBService, MongoService, AuthService }) => {
                 <Route
                     element={
                         <Room
-                        login={login}
-                        setLogin={setLogin}
-                        DBService={DBService}
+                            login={login}
+                            setLogin={setLogin}
+                            DBService={DBService}
                         />
                     }
                     path="/room/:id"
@@ -52,6 +53,16 @@ const App = ({ DBService, MongoService, AuthService }) => {
                         />
                     }
                     path="/signup"
+                />
+                <Route
+                    path="/edit"
+                    element={
+                        <ProfileEdit
+                            setLogin={setLogin}
+                            MongoService={MongoService}
+                            user={login.data}
+                        />
+                    }
                 />
             </Routes>
         </BrowserRouter>

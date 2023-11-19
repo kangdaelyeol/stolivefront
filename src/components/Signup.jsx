@@ -16,15 +16,7 @@ export default function Signup({ MongoService, setLogin }) {
         email: '1@1.1',
     })
 
-    useLogin(setLogin)
-    // ** useRef - refer to form input
-    const userNameRef = useRef()
-    const nickNameRef = useRef()
-    const pwRef = useRef()
-    const pw2Ref = useRef()
-    const emailRef = useRef()
-    const hbRef = useRef()
-    const ageRef = useRef()
+    useLogin(setLogin, "/home")
 
     const onResetBtnClick = () => {
         setFormVal({
