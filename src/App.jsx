@@ -61,6 +61,7 @@ const App = ({ DBService, MongoService, AuthService }) => {
                             setLogin={setLogin}
                             MongoService={MongoService}
                             user={login.data}
+                            AuthService={AuthService}
                         />
                     }
                 />

@@ -46,12 +46,12 @@ export default function Signup({ MongoService, setLogin }) {
 
         const result = await MongoService.createUser(submitData)
         console.log(result)
-        switch (result.type) {
-            case 'success':
+        switch (result.status) {
+            case true:
                 // when created
                 // session정보 갱신 -> 바로 로그인
                 break
-            case 'error':
+            case false:
                 // when error
                 const dpKeywords = Object.keys(result.data.keyPattern).join(' ')
                 alert(`${dpKeywords} 홀리싯`)

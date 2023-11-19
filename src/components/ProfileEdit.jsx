@@ -1,20 +1,31 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Styles from './profileEdit.module.css'
 import useLogin from '../hooks/useLogin'
+import tempProfile from '../images/pimg.jpeg'
 
-export default function ProfileEdit({ setLogin, MongoService, user }) {
-    console.log(user)
-    useLogin(setLogin)
+export default function ProfileEdit({
+    setLogin,
+    MongoService,
+    user,
+    AuthService,
+}) {
+    // *** useState ***
     const [formVal, setFormVal] = useState({
-        userName: '',
         nickName: '',
         pw: '',
         pw2: '',
         hb: '',
         age: '',
         email: '',
+        profile: 'None',
     })
 
+    // *** useNavigate ***
+    const navigate = useNavigate()
+
+    // *** useEffect(Custem Hook) ***
+    useLogin(setLogin, '/edit')
     useEffect(() => {
         if (!user) return
         setFormVal({
@@ -25,9 +36,15 @@ export default function ProfileEdit({ setLogin, MongoService, user }) {
             hb: user.hb,
             age: user.age,
             email: user.email,
+            profile: user.profile,
         })
     }, [user])
+
+    // *** useRef ***
     const profileRef = useRef()
+
+    
+    // *** EventHandlers
     const onProfileClick = (e) => {
         profileRef.current.click()
     }
@@ -46,23 +63,29 @@ export default function ProfileEdit({ setLogin, MongoService, user }) {
         const submitData = { ...formVal }
         delete submitData.pw2
 
-        const result = await MongoService.createUser(submitData)
+        const result = await MongoService.updateUser(submitData)
         console.log(result)
-        switch (result.type) {
-            case 'success':
+        switch (result.status) {
+            case true:
                 // when created
-                // session정보 갱신 -> 바로 로그인
+                // jwt 갱신
+                localStorage.setItem('JWT', result.jwt)
+                // login state 갱신
+                setLogin((v) => {
+                    return { status: true, data: { ...v } }
+                })
+                navigate('/home')
                 break
-            case 'error':
+            case false:
                 // when error
-                const dpKeywords = Object.keys(result.data.keyPattern).join(' ')
-                alert(`${dpKeywords} 홀리싯`)
+                alert(` 홀리싯`)
+                console.log(result.data)
                 break
             default:
                 throw new Error('홀리싯 Mongoose Error')
         }
     }
-    console.log(formVal)
+    
     const onFormChange = (e) => {
         const inputName = e.currentTarget.name
         const inputVal = e.currentTarget.value
@@ -77,8 +100,7 @@ export default function ProfileEdit({ setLogin, MongoService, user }) {
         <div className={Styles.container}>
             <div className={Styles.wrapper}>
                 <div className={Styles.title}>회원정보 수정</div>
-                <div className={Styles.profile}>
-                    <div className={Styles.profile__title}>프로필 사진</div>
+                <div className={Styles.profilebox}>
                     <input
                         type="file"
                         accept="image/*"
@@ -86,7 +108,15 @@ export default function ProfileEdit({ setLogin, MongoService, user }) {
                         ref={profileRef}
                     />
                     <div onClick={onProfileClick} className={Styles.profilebox}>
-                        <img src="profile" alt="profileImg" />
+                        <div className={Styles.editform}>수정</div>
+                        <img
+                            src={
+                                formVal.profile === 'None'
+                                    ? tempProfile
+                                    : formVal.profile
+                            }
+                            alt="profileImg"
+                        />
                     </div>
                 </div>
                 <div className={Styles.form__container}>
@@ -94,14 +124,6 @@ export default function ProfileEdit({ setLogin, MongoService, user }) {
                         onSubmit={onFormSubmit}
                         className={Styles.signup__form}
                     >
-                        <input
-                            type="text"
-                            name="userName"
-                            value={formVal.userName}
-                            className={Styles.signup__input}
-                            placeholder="아이디"
-                            onChange={onFormChange}
-                        />
                         <input
                             type="text"
                             name="nickName"

@@ -64,6 +64,11 @@ export class MongoService {
         const result = await this.http.postFetchReq('deleteuser', { data })
     }
 
+    updateUser = async (data) => {
+        const result = await this.http.postFetchReq('updateuser', { data })
+        return result
+    }
+
     login = async (data) => {
         const result = await this.http.postFetchReq('login', { data })
         return result
