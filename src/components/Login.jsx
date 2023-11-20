@@ -20,6 +20,10 @@ export default function Login({ login, setLogin, DBService }) {
         'login...',
     )
 
+    const onSignupClick = (e) => {
+        navigate('/signup')
+    }
+
     // ** useEffect: check Login Status by checking and verifying JWT
 
     const onFormSubmit = async (e) => {
@@ -88,7 +92,7 @@ export default function Login({ login, setLogin, DBService }) {
                             아직 회원이 아니신가요? <br />
                             학교 메일 인증으로 편하게 가입하세요!
                         </div>
-                        <div className={Styles.signupbtn}>ㅎㄹㅅ 하러 가기</div>
+                        <div onClick={onSignupClick} className={Styles.signupbtn}>ㅎㄹㅅ 하러 가기</div>
                     </div>
                 </div>
             </div>

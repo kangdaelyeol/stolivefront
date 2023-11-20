@@ -1,20 +1,23 @@
-import React, {useState} from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Styles from './header.module.css'
 import pImg from '../../images/pimg.jpeg'
-import ProfileModal from "./ProfileModal"
+import ProfileModal from './ProfileModal'
 
 export default function Header({ login, setLogin }) {
-    const [modal, setModal] = useState(false);
+    const [modal, setModal] = useState(false)
     const navigate = useNavigate()
+    const location = useLocation()
     const onTitleClick = () => {
         navigate('/home')
     }
 
     const onProfileClick = () => {
-        setModal(v => !v)
+        setModal((v) => !v)
     }
-    
+    useEffect(() => {
+        setModal(false)
+    }, [location])
     const profileUrl = login.status
         ? login.data.profile === 'None'
             ? pImg
@@ -31,7 +34,15 @@ export default function Header({ login, setLogin }) {
                     <span className={Styles.title}>STORLIVE</span>
                 </div>
                 <div className={Styles.right}>
-                    {modal && login.status ? <ProfileModal user={login.data} setModal={setModal} setLogin={setLogin}/> : ""}
+                    {modal && login.status ? (
+                        <ProfileModal
+                            user={login.data}
+                            setModal={setModal}
+                            setLogin={setLogin}
+                        />
+                    ) : (
+                        ''
+                    )}
                     <div className={Styles.profile} onClick={onProfileClick}>
                         <img
                             src={profileUrl}

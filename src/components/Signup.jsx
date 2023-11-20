@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Styles from './signup.module.css'
 import useLogin from '../hooks/useLogin'
 
-
-
-export default function Signup({ DBService, setLogin }) {
+export default function Signup({ DBService, setLogin, AuthService }) {
     // ** useState to change form Value
     const [formVal, setFormVal] = useState({
         userName: '1',
@@ -16,7 +15,10 @@ export default function Signup({ DBService, setLogin }) {
         email: '1@1.1',
     })
 
-    useLogin(setLogin, "/home")
+    const navigate = useNavigate()
+
+    // useLogin - custom hook
+    useLogin(setLogin, '/home')
 
     const onResetBtnClick = () => {
         setFormVal({
@@ -44,23 +46,26 @@ export default function Signup({ DBService, setLogin }) {
         const submitData = { ...formVal }
         delete submitData.pw2
 
-        const result = await DBService.createUser(submitData)
-        console.log(result)
-        switch (result.status) {
+        const { status, data, jwt } = await DBService.createUser(submitData)
+
+        switch (status) {
             case true:
                 // when created
                 // session정보 갱신 -> 바로 로그인
+                localStorage.setItem('JWT', jwt)
+                setLogin({ ...data })
+                navigate('/home')
                 break
             case false:
                 // when error
-                const dpKeywords = Object.keys(result.data.keyPattern).join(' ')
+                const dpKeywords = Object.keys(data.keyPattern).join(' ')
                 alert(`${dpKeywords} 홀리싯`)
                 break
             default:
                 throw new Error('홀리싯 Mongoose Error')
         }
     }
-    console.log(formVal)
+
     const onFormChange = (e) => {
         const inputName = e.currentTarget.name
         const inputVal = e.currentTarget.value

@@ -49,6 +49,7 @@ const App = ({ DBService, AuthService }) => {
                         <Signup
                             DBService={DBService}
                             setLogin={setLogin}
+                            AuthService={AuthService}
                         />
                     }
                     path="/signup"

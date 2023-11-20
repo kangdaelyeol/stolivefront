@@ -100,7 +100,7 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
         }
         const resultUrl = await DBService.uploadTempProfile(formData)
         setProfileUrl(process.env.REACT_APP_BASE_URL + resultUrl)
-
+        
         // delete temp img in server storage
         if (profileUrl === user.profile) return
         const deleteResult = await DBService.deleteTempProfile(profileUrl)
