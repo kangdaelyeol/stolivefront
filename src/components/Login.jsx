@@ -5,7 +5,7 @@ import loginPgImg from '../images/login_pg_img.png'
 import useLogin from '../hooks/useLogin'
 import useLoading from '../hooks/useLoading'
 
-export default function Login({ login, setLogin, MongoService }) {
+export default function Login({ login, setLogin, DBService }) {
     const navigate = useNavigate()
     const userNameRef = useRef()
     const pwRef = useRef()
@@ -25,7 +25,7 @@ export default function Login({ login, setLogin, MongoService }) {
     const onFormSubmit = async (e) => {
         e.preventDefault()
         setIsloading(true)
-        const result = await MongoService.login({ ...inputVal })
+        const result = await DBService.login({ ...inputVal })
         if (!result.status) {
             setIsloading(false)
             return

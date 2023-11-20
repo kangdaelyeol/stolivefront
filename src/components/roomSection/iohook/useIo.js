@@ -8,7 +8,7 @@ const mediaServ = new MediaService()
 const listenerService = new ListenerService()
 const mediaControlService = new MediaControlService(mediaServ)
 
-export const useIo = (URL, roomName, userName) => {
+export const useIo = (baseURL, roomName, userName) => {
     const [myStream, setMyStream] = useState(null)
     const [muted, setMuted] = useState(false)
     const [cameraOff, setCameraOff] = useState(false)
@@ -33,7 +33,7 @@ export const useIo = (URL, roomName, userName) => {
     // *** useEffect - GetMedia ***
     useEffect(() => {
         if (!socket) {
-            setSocket(io(URL))
+            setSocket(io(baseURL))
             return
         }
 

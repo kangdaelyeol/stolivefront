@@ -7,7 +7,7 @@ import Login from './components/Login'
 import Signup from './components/Signup'
 import ProfileEdit from './components/ProfileEdit'
 
-const App = ({ DBService, MongoService, AuthService }) => {
+const App = ({ DBService, AuthService }) => {
     const [login, setLogin] = useState({ status: false })
 
     return (
@@ -39,7 +39,7 @@ const App = ({ DBService, MongoService, AuthService }) => {
                         <Login
                             login={login}
                             setLogin={setLogin}
-                            MongoService={MongoService}
+                            DBService={DBService}
                             AuthService={AuthService}
                         />
                     }
@@ -48,7 +48,7 @@ const App = ({ DBService, MongoService, AuthService }) => {
                 <Route
                     element={
                         <Signup
-                            MongoService={MongoService}
+                            DBService={DBService}
                             setLogin={setLogin}
                         />
                     }
@@ -59,7 +59,7 @@ const App = ({ DBService, MongoService, AuthService }) => {
                     element={
                         <ProfileEdit
                             setLogin={setLogin}
-                            MongoService={MongoService}
+                            DBService={DBService}
                             user={login.data}
                             AuthService={AuthService}
                         />

@@ -20,11 +20,24 @@ class HttpReq {
             return false
         }
     }
+
+    formDataReq = async (reqURL, body, headers = {}) => {
+        try {
+            const result = await fetch(`${this.baseURL}/${reqURL}`, {
+                method: 'POST',
+                headers: { ...headers },
+                body: body || null,
+            })
+            return await result.json()
+        } catch (e) {
+            console.log(e)
+            return false
+        }
+    }
 }
 
 export class DBService {
     constructor(baseURL) {
-        this.baseURL = baseURL
         this.http = new HttpReq(baseURL)
     }
 
@@ -43,12 +56,6 @@ export class DBService {
     getRoomById = async (roomid) => {
         const result = await this.http.postFetchReq('roominfo', { roomid })
         return result
-    }
-}
-
-export class MongoService {
-    constructor(baseURL) {
-        this.http = new HttpReq(baseURL)
     }
 
     createUser = async (data) => {
@@ -72,6 +79,12 @@ export class MongoService {
     login = async (data) => {
         const result = await this.http.postFetchReq('login', { data })
         return result
+    }
+
+    uploadProfile = async (data) => {
+        const result = await this.http.formDataReq('uploadprofile', data)
+        console.log(result.url)
+        return result.url
     }
 }
 

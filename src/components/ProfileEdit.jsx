@@ -4,12 +4,7 @@ import Styles from './profileEdit.module.css'
 import useLogin from '../hooks/useLogin'
 import tempProfile from '../images/pimg.jpeg'
 
-export default function ProfileEdit({
-    setLogin,
-    MongoService,
-    user,
-    AuthService,
-}) {
+export default function ProfileEdit({ setLogin, DBService, user }) {
     // *** useState ***
     const [formVal, setFormVal] = useState({
         nickName: '',
@@ -18,8 +13,9 @@ export default function ProfileEdit({
         hb: '',
         age: '',
         email: '',
-        profile: 'None',
     })
+
+    const [profileUrl, setProfileUrl] = useState('None')
 
     // *** useNavigate ***
     const navigate = useNavigate()
@@ -36,14 +32,13 @@ export default function ProfileEdit({
             hb: user.hb,
             age: user.age,
             email: user.email,
-            profile: user.profile,
         })
+        setProfileUrl(user.profile)
     }, [user])
 
     // *** useRef ***
     const profileRef = useRef()
 
-    
     // *** EventHandlers
     const onProfileClick = (e) => {
         profileRef.current.click()
@@ -60,10 +55,10 @@ export default function ProfileEdit({
             alert('학번 이름 잘 써줘용')
             return
         }
-        const submitData = { ...formVal }
+        const submitData = { ...formVal, profile: profileUrl }
         delete submitData.pw2
 
-        const result = await MongoService.updateUser(submitData)
+        const result = await DBService.updateUser(submitData)
         console.log(result)
         switch (result.status) {
             case true:
@@ -85,7 +80,7 @@ export default function ProfileEdit({
                 throw new Error('홀리싯 Mongoose Error')
         }
     }
-    
+
     const onFormChange = (e) => {
         const inputName = e.currentTarget.name
         const inputVal = e.currentTarget.value
@@ -96,24 +91,37 @@ export default function ProfileEdit({
             }
         })
     }
+
+    const onProfileChange = async (e) => {
+        const files = e.currentTarget?.files
+        console.log(files)
+        const formData = new FormData()
+        for (let i = 0; i < files.length; i++) {
+            formData.append('avatar', files[i])
+        }
+
+        const resultUrl = await DBService.uploadProfile(formData)
+        setProfileUrl(resultUrl)
+    }
     return (
         <div className={Styles.container}>
             <div className={Styles.wrapper}>
                 <div className={Styles.title}>회원정보 수정</div>
                 <div className={Styles.profilebox}>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        className={Styles.imginput}
-                        ref={profileRef}
-                    />
+                    <form encType="multipart/form-data">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className={Styles.imginput}
+                            ref={profileRef}
+                            onChange={onProfileChange}
+                        />
+                    </form>
                     <div onClick={onProfileClick} className={Styles.profilebox}>
                         <div className={Styles.editform}>수정</div>
                         <img
                             src={
-                                formVal.profile === 'None'
-                                    ? tempProfile
-                                    : formVal.profile
+                                profileUrl === 'None' ? tempProfile : profileUrl
                             }
                             alt="profileImg"
                         />

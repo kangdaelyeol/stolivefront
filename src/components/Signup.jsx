@@ -4,7 +4,7 @@ import useLogin from '../hooks/useLogin'
 
 
 
-export default function Signup({ MongoService, setLogin }) {
+export default function Signup({ DBService, setLogin }) {
     // ** useState to change form Value
     const [formVal, setFormVal] = useState({
         userName: '1',
@@ -44,7 +44,7 @@ export default function Signup({ MongoService, setLogin }) {
         const submitData = { ...formVal }
         delete submitData.pw2
 
-        const result = await MongoService.createUser(submitData)
+        const result = await DBService.createUser(submitData)
         console.log(result)
         switch (result.status) {
             case true:
