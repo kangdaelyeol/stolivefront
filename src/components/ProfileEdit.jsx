@@ -101,6 +101,8 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
         }
 
         const resultUrl = await DBService.uploadProfile(formData)
+        // remove in Cloudinary
+        if(profileUrl === user.profile)
         setProfileUrl(resultUrl)
     }
     return (

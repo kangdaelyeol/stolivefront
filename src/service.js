@@ -83,8 +83,15 @@ export class DBService {
 
     uploadProfile = async (data) => {
         const result = await this.http.formDataReq('uploadprofile', data)
-        console.log(result.url)
-        return result.url
+        console.log(result)
+        return result.data
+    }
+
+    deleteProfile = async (url) => {
+        const fileArr = url.split('/')
+        const fileName = fileArr[fileArr.length - 1].split('.')[0]
+        const result = await this.http.postFetchReq('deleteProfile', { fileName })
+        return result
     }
 }
 
