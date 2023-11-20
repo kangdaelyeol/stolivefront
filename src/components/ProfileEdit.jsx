@@ -73,7 +73,7 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
                 break
             case false:
                 // when error
-                alert(` 홀리싯`)
+                alert(`홀리싯`)
                 console.log(result.data)
                 break
             default:
@@ -94,16 +94,17 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
 
     const onProfileChange = async (e) => {
         const files = e.currentTarget?.files
-        console.log(files)
         const formData = new FormData()
         for (let i = 0; i < files.length; i++) {
             formData.append('avatar', files[i])
         }
+        const resultUrl = await DBService.uploadTempProfile(formData)
+        setProfileUrl(process.env.REACT_APP_BASE_URL + resultUrl)
 
-        const resultUrl = await DBService.uploadProfile(formData)
-        // remove in Cloudinary
-        if(profileUrl === user.profile)
-        setProfileUrl(resultUrl)
+        // delete temp img in server storage
+        if (profileUrl === user.profile) return
+        const deleteResult = await DBService.deleteTempProfile(profileUrl)
+        console.log(deleteResult)
     }
     return (
         <div className={Styles.container}>

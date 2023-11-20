@@ -4,7 +4,7 @@ import './index.css'
 import App from './App'
 import { AuthService, DBService } from './service'
 
-const REQUEST_URL = 'http://localhost:8000'
+const REQUEST_URL = process.env.REACT_APP_BASE_URL
 
 const dbService = new DBService(REQUEST_URL)
 const authService = new AuthService(REQUEST_URL)

@@ -9,7 +9,6 @@ import ProfileEdit from './components/ProfileEdit'
 
 const App = ({ DBService, AuthService }) => {
     const [login, setLogin] = useState({ status: false })
-
     return (
         <BrowserRouter>
             <Header login={login} setLogin={setLogin} />

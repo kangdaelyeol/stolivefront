@@ -81,16 +81,16 @@ export class DBService {
         return result
     }
 
-    uploadProfile = async (data) => {
-        const result = await this.http.formDataReq('uploadprofile', data)
+    uploadTempProfile = async (data) => {
+        const result = await this.http.formDataReq('uploadtempprofile', data)
         console.log(result)
         return result.data
     }
 
-    deleteProfile = async (url) => {
-        const fileArr = url.split('/')
-        const fileName = fileArr[fileArr.length - 1].split('.')[0]
-        const result = await this.http.postFetchReq('deleteProfile', { fileName })
+    deleteTempProfile = async (fileUrl) => {
+        const result = await this.http.postFetchReq('deletetempprofile', {
+            fileUrl,
+        })
         return result
     }
 }
