@@ -17,6 +17,9 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
 
     const [profileUrl, setProfileUrl] = useState('None')
 
+    // formData to req Cloudinary when profile is decided clearly
+    const [formData, setFormData] = useState(false)
+
     // *** useNavigate ***
     const navigate = useNavigate()
 
@@ -35,6 +38,16 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
         })
         setProfileUrl(user.profile)
     }, [user])
+
+    // ** useEffect - when profile is changed
+    useEffect(() => {
+        return async () => {
+            if (user.profile === profileUrl) return
+
+            const result = await DBService.deleteTempProfile(profileUrl)
+            console.log(result)
+        }
+    }, [profileUrl])
 
     // *** useRef ***
     const profileRef = useRef()
@@ -58,23 +71,23 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
         const submitData = { ...formVal, profile: profileUrl }
         delete submitData.pw2
 
-        const result = await DBService.updateUser(submitData)
-        console.log(result)
-        switch (result.status) {
+        const { status, data, jwt } = await DBService.updateUser({
+            userData: submitData,
+            formData,
+        })
+        switch (status) {
             case true:
                 // when created
                 // jwt 갱신
-                localStorage.setItem('JWT', result.jwt)
+                localStorage.setItem('JWT', jwt)
                 // login state 갱신
-                setLogin((v) => {
-                    return { status: true, data: { ...v } }
-                })
+                setLogin({ status, data })
                 navigate('/home')
                 break
             case false:
                 // when error
                 alert(`홀리싯`)
-                console.log(result.data)
+                console.log(data)
                 break
             default:
                 throw new Error('홀리싯 Mongoose Error')
@@ -98,14 +111,11 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
         for (let i = 0; i < files.length; i++) {
             formData.append('avatar', files[i])
         }
-        const resultUrl = await DBService.uploadTempProfile(formData)
-        setProfileUrl(process.env.REACT_APP_BASE_URL + resultUrl)
-        
-        // delete temp img in server storage
-        if (profileUrl === user.profile) return
-        const deleteResult = await DBService.deleteTempProfile(profileUrl)
-        console.log(deleteResult)
+        const result = await DBService.uploadTempProfile(formData)
+        setProfileUrl(process.env.REACT_APP_BASE_URL + result.data)
+        setFormData(result.formData)
     }
+
     return (
         <div className={Styles.container}>
             <div className={Styles.wrapper}>

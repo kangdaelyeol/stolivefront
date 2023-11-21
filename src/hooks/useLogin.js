@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthService } from '../service'
 
-const REQUEST_URL = 'http://localhost:8000'
+const REQUEST_URL = process.env.REACT_APP_BASE_URL
 const authService = new AuthService(REQUEST_URL)
 
 const useLogin = (setLogin, path) => {

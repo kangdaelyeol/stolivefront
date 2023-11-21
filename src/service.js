@@ -71,8 +71,8 @@ export class DBService {
         const result = await this.http.postFetchReq('deleteuser', { data })
     }
 
-    updateUser = async (data) => {
-        const result = await this.http.postFetchReq('updateuser', { data })
+    updateUser = async ({userData, formData}) => {
+        const result = await this.http.postFetchReq('updateuser', { userData, formData })
         return result
     }
 
@@ -84,7 +84,7 @@ export class DBService {
     uploadTempProfile = async (data) => {
         const result = await this.http.formDataReq('uploadtempprofile', data)
         console.log(result)
-        return result.data
+        return result
     }
 
     deleteTempProfile = async (fileUrl) => {
