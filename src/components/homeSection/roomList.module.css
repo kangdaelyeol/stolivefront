@@ -29,6 +29,17 @@
   box-shadow: 0px 5px 4px -1px rgba(0,0,0,0.5);
 }
 
+.empty__box {
+  height: 180px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 60px;
+  font-weight: bold;
+  color: rgba(0,0,0,0.2);
+}
+
 .box__top {
   display: flex;
   justify-content: flex-end;

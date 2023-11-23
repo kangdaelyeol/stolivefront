@@ -15,8 +15,15 @@ const CategoryBox = ({ value, main }) => {
     )
 }
 
-const RoomBox = ({ title, description, people, category, subCategory, roomId }) => {
-    const navigate = useNavigate();
+const RoomBox = ({
+    title,
+    description,
+    people,
+    category,
+    subCategory,
+    roomId,
+}) => {
+    const navigate = useNavigate()
     const onBoxClick = (e) => {
         navigate(`/room/${roomId}`)
     }
@@ -34,9 +41,12 @@ const RoomBox = ({ title, description, people, category, subCategory, roomId }) 
             <div className={Styles.box__bottom}>
                 <div className={Styles.box__bottom__category}>
                     <CategoryBox main value={category} />
-                    {subCategory.map((c, i) => (
-                        <CategoryBox value={c} key={i} />
-                    ))}
+                    {subCategory.map(
+                        (c, i) =>
+                            c.trim() !== '' && (
+                                <CategoryBox value={c} key={i} />
+                            ),
+                    )}
                 </div>
             </div>
         </div>
@@ -63,7 +73,7 @@ const PageBtn = ({ value, pageIndex, setPageIndex }) => {
 }
 
 export default function RoomList({ title, roomData }) {
-    const MAX_PAGE = 10 // pageIndex - 철수 장기
+    const MAX_PAGE = Math.ceil(roomData.length / 3) || 1 // pageIndex - 철수 장기
     const pages = []
     for (let i = 0; i < MAX_PAGE; i++) pages.push(i + 1)
 
@@ -89,9 +99,23 @@ export default function RoomList({ title, roomData }) {
         <div className={Styles.room__container}>
             <div className={Styles.room__title}>{title}</div>
             <div className={Styles.rooms}>
-                {roomData.map((roomData, i) => (
-                    <RoomBox {...roomData} key={i} />
-                ))}
+                {roomData.length === 0 ? (
+                    <div className={Styles.empty__box}>No Room</div>
+                ) : (
+                    <>
+                        <RoomBox {...roomData[`${0 + (pageIndex - 1) * 3}`]} />
+                        {roomData.length >= 2 + (pageIndex - 1) * 3 && (
+                            <RoomBox
+                                {...roomData[`${1 + (pageIndex - 1) * 3}`]}
+                            />
+                        )}
+                        {roomData.length >= 3 + (pageIndex - 1) * 3 && (
+                            <RoomBox
+                                {...roomData[`${2 + (pageIndex - 1) * 3}`]}
+                            />
+                        )}
+                    </>
+                )}
             </div>
             <div className={Styles.room__pagebar}>
                 <div

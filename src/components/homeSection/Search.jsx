@@ -5,7 +5,11 @@ const searchIconURL =
     'https://lh3.googleusercontent.com/a/ACg8ocI-3LrdNOhDIFId5_WXJHabTsFijFLobWNYrYEwLucb=s83-c-mo'
 const tagList = ['스터디', '운동', '혼밥', '고민상담']
 
-export default function SearchSection() {
+export default function SearchSection({ category, setCategory }) {
+    const onTagClick = (e) => {
+        const name = e.currentTarget.dataset.name
+        setCategory(name)
+    }
     return (
         <div className={Styles.search}>
             <div className={Styles.search__title}>방 검색하기</div>
@@ -20,7 +24,14 @@ export default function SearchSection() {
             <div className={Styles.search__tags}>
                 {tagList.map((tag) => {
                     return (
-                        <div className={Styles.search__tag} key={tag}>
+                        <div
+                            className={`${Styles.search__tag} ${
+                                tag === category && Styles.tag__focus
+                            }`}
+                            onClick={onTagClick}
+                            key={tag}
+                            data-name={tag}
+                        >
                             {tag}
                         </div>
                     )

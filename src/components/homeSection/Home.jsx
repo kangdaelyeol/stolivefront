@@ -34,12 +34,12 @@ const tempRoomData = [
     },
 ]
 
-export default function Home({ login, DBService }) {
+export default function Home({ DBService }) {
     const [isCreate, setIsCreate] = useState(false)
+    const [category, setCategory] = useState('스터디')
 
     const navigate = useNavigate()
     const [roomData, isLoading, setRefresh] = useGetRooms(DBService)
-
     // 대충 가공 해보기 -> 전체 카테고리 / 스터디 ....
     // roomData는 서버에서 구분해서 줘도 되고, 여기서 다 받아온담 가공해서 따로 해도 되고
 
@@ -70,7 +70,7 @@ export default function Home({ login, DBService }) {
             <div className={Styles.background}>
                 <div className={Styles.main__padding}>
                     <div className={Styles.main}>
-                        <Search />
+                        <Search category={category} setCategory={setCategory} />
                         {isLoading ? (
                             <LoadingSpinner />
                         ) : (
@@ -79,7 +79,7 @@ export default function Home({ login, DBService }) {
                                     title="전체 카테고리"
                                     roomData={roomData}
                                 />
-                                <RoomList title="쓰터디" roomData={roomData} />
+                                <RoomList title={category} roomData={roomData} />
                             </>
                         )}
                     </div>
