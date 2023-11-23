@@ -8,7 +8,7 @@ export default class RTCProcessService {
         setIceQueue,
         socket,
         setConnectedList,
-        myData
+        myData,
     ) {
         this.myStream = myStream
         this.roomName = roomName
@@ -21,7 +21,8 @@ export default class RTCProcessService {
         this.myData = myData
     }
 
-    onWelcome = async (senderId, userData) => {
+    onWelcome = async (senderId, userdata) => {
+        const userData = JSON.parse(userdata)
         // Welcome -> 처음 온 사람만 보냄
         // senderId -> 처음 온 사람의 Id -> 그 아이디에 대한 peerConnection 처리
         const peerConnection = this.getRTCPeerConnection(senderId, userData)
@@ -32,13 +33,20 @@ export default class RTCProcessService {
             ...v,
             [senderId]: peerConnection,
         }))
+        console.log('myData', this.myData)
         await new Promise((resolve) => setTimeout(resolve, 1000))
-        this.socket.emit('offer', offer, `${this.roomName}${senderId}`, this.myData)
+        this.socket.emit(
+            'offer',
+            offer,
+            `${this.roomName}${senderId}`,
+            JSON.stringify(this.myData),
+        )
     }
 
-    onOffer = async (offer, senderId, userData) => {
+    onOffer = async (offer, senderId, userdata) => {
+        const userData = JSON.parse(userdata)
         // 받은 id == 상대방의 id
-
+        console.log('onOfferData:', userData)
         // 나는 처음와서 roomJoin 보내고 있던 상대는 offer 받음
         const peerConnection = this.getRTCPeerConnection(senderId, userData)
         console.log('received the offer from', senderId)
@@ -56,7 +64,6 @@ export default class RTCProcessService {
     }
 
     onIce = (ice, senderName) => {
-        console.log('received ice candidate')
         if (!this.peerConnections[`${senderName}`]) {
             this.setIceQueue((v) => {
                 const newIceQueue = [...v]
@@ -127,14 +134,16 @@ export default class RTCProcessService {
 
     handleRemoveStream(senderId) {
         this.setPeerConnections((v) => {
+            console.log("peerconnections:",v)
             const newPCs = { ...v }
             delete newPCs[senderId]
             return newPCs
         })
         this.setConnectedList((v) => {
+            console.log("connectedLists:",v)
             const newCL = []
             v.forEach((l) => {
-                if (l.senderId !== `V_${senderId}`) newCL.push({ ...v })
+                if (l.senderId !== `V_${senderId}`) newCL.push({ ...l })
             })
             return newCL
         })

@@ -20,9 +20,6 @@ export const useIo = (baseURL, roomName, userData) => {
     const [socket, setSocket] = useState(null)
     const [listeners, setListeners] = useState({})
     const navigate = useNavigate()
-    if (!userData) {
-        navigate('/login')
-    }
 
     mediaControlService.setProps(
         myStream,
@@ -40,6 +37,10 @@ export const useIo = (baseURL, roomName, userData) => {
         if (!socket) {
             setSocket(io(baseURL))
             return
+        }
+        console.log(userData)
+        if (!userData) {
+            navigate('/login')
         }
 
         ;(async () => {
@@ -62,12 +63,22 @@ export const useIo = (baseURL, roomName, userData) => {
                 setMyStream(myStream)
                 setCameraOptValues([...camerasSelect])
                 listenerService.setIoListener()
-                socket.emit('join_room', roomName, socket.id, userData)
+                console.log('userData:', userData, JSON.stringify(userData))
+                socket.emit(
+                    'join_room',
+                    roomName,
+                    socket.id,
+                    JSON.stringify(userData),
+                )
             })
             socket.on('error', (e) => {
                 console.log(e)
             })
         })()
+        return () => {
+            socket.disconnect()
+            console.log('useIO unmounted')
+        }
     }, [socket])
 
     // ** useEffect - when peerConnections change -> need to reset EventListeners to make funcion to refer state changed
@@ -84,6 +95,7 @@ export const useIo = (baseURL, roomName, userData) => {
             setConnectedList,
             listeners,
             setListeners,
+            userData,
         )
         listenerService.resetIolistener()
     }, [peerConnections])

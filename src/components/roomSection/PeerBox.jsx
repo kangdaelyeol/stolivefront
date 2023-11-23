@@ -4,7 +4,6 @@ import defaultImg from '../../images/pimg.jpeg'
 const VIDEO_WIDTH = 400
 
 export default function PeerBox({ userData, speaking, video, me, myStream }) {
-    console.log(userData)
     const videoRef = useRef()
     useEffect(() => {
         if (!videoRef.current) return
