@@ -1,9 +1,17 @@
 import React, { useEffect, useRef } from 'react'
 import Styles from './peerBox.module.css'
-import defaultImg from '../../images/pimg.jpeg'
-const VIDEO_WIDTH = 400
 
-export default function PeerBox({ userData, speaking, video, me, myStream }) {
+const VIDEO_WIDTH = 400
+const defaultImg = process.env.REACT_APP_BASE_PROFILE
+
+export default function PeerBox({
+    userData,
+    speaking,
+    video,
+    me,
+    myStream,
+    messageBox,
+}) {
     const videoRef = useRef()
     useEffect(() => {
         if (!videoRef.current) return
@@ -23,6 +31,21 @@ export default function PeerBox({ userData, speaking, video, me, myStream }) {
         >
             {me ? <div className={Styles.me}>나</div> : ''}
             <div className={Styles.peer__video}>
+                {messageBox.map((m, i) => {
+                    if (m.owner === userData.userName) {
+                        return (
+                            <div
+                                style={{
+                                    ...m.position,
+                                }}
+                                className={Styles.messagebox}
+                                key={i}
+                            >
+                                {m.message}
+                            </div>
+                        )
+                    }
+                })}
                 {me ? (
                     <>
                         <video

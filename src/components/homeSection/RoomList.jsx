@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Styles from './roomList.module.css'
 
@@ -80,7 +80,9 @@ export default function RoomList({ title, roomData }) {
     for (let i = 0; i < MAX_PAGE; i++) pages.push(i + 1)
 
     const [pageIndex, setPageIndex] = useState(1)
-
+    useEffect(() => {
+        setPageIndex(1)
+    },[title])
     // onArrowBtnClick
     const onArrowBtnClick = (e) => {
         const direction = e.currentTarget.dataset.direction

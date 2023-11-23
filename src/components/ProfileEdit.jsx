@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Styles from './profileEdit.module.css'
-import tempProfile from '../images/pimg.jpeg'
 import LoadingSpinner from './LoadingSpinner'
-
+const tempProfile =
+    'http://res.cloudinary.com/dlhshpa8q/image/upload/v1700764828/KakaoTalk_Photo_2023-11-24-03-39-30_s8zpkk.png'
 export default function ProfileEdit({ setLogin, DBService, user }) {
     // *** useState ***
     const [formVal, setFormVal] = useState({
@@ -42,9 +42,7 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
         return async () => {
             if (!user) return navigate('/login')
             if (user.profile === profileUrl) return
-            setIsLoading(true)
             const result = await DBService.deleteTempProfile(profileUrl)
-            setIsLoading(false)
             console.log(result)
         }
     }, [profileUrl, navigate, DBService, user])
@@ -69,13 +67,17 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
             return
         }
         setIsLoading(true)
-        const submitData = { ...formVal, profile: profileUrl }
+        const submitData = {
+            ...formVal,
+            profile: profileUrl,
+            userName: user.userName,
+        }
         delete submitData.pw2
-
         const { status, data, jwt } = await DBService.updateUser({
             userData: submitData,
             formData,
         })
+        console.log('updatedDAta', data)
         switch (status) {
             case true:
                 // when created

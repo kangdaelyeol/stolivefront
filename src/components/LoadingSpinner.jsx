@@ -16,7 +16,7 @@ export default function LoadingSpinner({ size, message }) {
                     fontSize: size ? `calc(${size} / 4` : '',
                 }}
             >
-                {message || `호리싯`}
+                {message || `Loading`}
             </span>
         </div>
     )

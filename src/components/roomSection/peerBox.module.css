@@ -67,6 +67,17 @@
 }
 
 .peer__profile img {
-  width: 22px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
+}
+
+.messagebox {
+  position: absolute;
+  background-color: wheat;
+  padding: 5px 10px;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 10px;
+  z-index: 4;
 }

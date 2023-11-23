@@ -1,9 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Styles from './login.module.css'
-import loginPgImg from '../images/login_pg_img.png'
 import useLoading from '../hooks/useLoading'
 
+const loginPgImg = process.env.REACT_APP_BASE_LOGIN
 export default function Login({ login, setLogin, DBService }) {
     const navigate = useNavigate()
     const userNameRef = useRef()
@@ -13,10 +13,10 @@ export default function Login({ login, setLogin, DBService }) {
         password: '',
     })
     useEffect(() => {
-        login.status && navigate("/home")
+        login.status && navigate('/home')
     })
     const [setIsloading, LoginBtn] = useLoading(
-        <input type="submit" className={Styles.login__btn} value="ㅎㄹㅅ" />,
+        <input type="submit" className={Styles.login__btn} value="Login" />,
         '100px',
         'login...',
     )
@@ -33,7 +33,7 @@ export default function Login({ login, setLogin, DBService }) {
         const result = await DBService.login({ ...inputVal })
         if (!result.status) {
             setIsloading(false)
-            return alert("사용자 정보가 일치하지 않습니다.")
+            return alert('사용자 정보가 일치하지 않습니다.')
         }
 
         setLogin({
@@ -90,9 +90,14 @@ export default function Login({ login, setLogin, DBService }) {
                     <div className={Styles.alert__right}>
                         <div className={Styles.alert__title}>
                             아직 회원이 아니신가요? <br />
-                            학교 메일 인증으로 편하게 가입하세요!
+                            가입하세요!
                         </div>
-                        <div onClick={onSignupClick} className={Styles.signupbtn}>ㅎㄹㅅ 하러 가기</div>
+                        <div
+                            onClick={onSignupClick}
+                            className={Styles.signupbtn}
+                        >
+                            가입 하러가기
+                        </div>
                     </div>
                 </div>
             </div>

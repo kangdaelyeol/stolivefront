@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Styles from './header.module.css'
-import pImg from '../../images/pimg.jpeg'
 import ProfileModal from './ProfileModal'
-
 export default function Header({ login, setLogin }) {
     const [modal, setModal] = useState(false)
     const navigate = useNavigate()
@@ -20,9 +18,9 @@ export default function Header({ login, setLogin }) {
     }, [location])
     const profileUrl = login.status
         ? login.data.profile === 'None'
-            ? pImg
+            ? process.env.REACT_APP_BASE_PROFILE
             : login.data.profile
-        : pImg
+        : process.env.REACT_APP_BASE_PROFILE
 
     return (
         <div className={Styles.container}>

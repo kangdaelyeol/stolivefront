@@ -9,6 +9,7 @@ export default class RTCProcessService {
         socket,
         setConnectedList,
         myData,
+        attachMessage,
     ) {
         this.myStream = myStream
         this.roomName = roomName
@@ -19,6 +20,11 @@ export default class RTCProcessService {
         this.socket = socket
         this.setConnectedList = setConnectedList
         this.myData = myData
+        this.attachMessage = attachMessage
+    }
+
+    onMessage = (message) => {
+        this.attachMessage(message)
     }
 
     onWelcome = async (senderId, userdata) => {
@@ -134,13 +140,13 @@ export default class RTCProcessService {
 
     handleRemoveStream(senderId) {
         this.setPeerConnections((v) => {
-            console.log("peerconnections:",v)
+            console.log('peerconnections:', v)
             const newPCs = { ...v }
             delete newPCs[senderId]
             return newPCs
         })
         this.setConnectedList((v) => {
-            console.log("connectedLists:",v)
+            console.log('connectedLists:', v)
             const newCL = []
             v.forEach((l) => {
                 if (l.senderId !== `V_${senderId}`) newCL.push({ ...l })
@@ -156,6 +162,7 @@ export default class RTCProcessService {
             this.onAnswer,
             this.onIce,
             this.onWillLeave,
+            this.onMessage,
         ]
     }
 }

@@ -1,8 +1,7 @@
 import React from 'react'
 import Styles from './search.module.css'
 
-const searchIconURL =
-    'https://lh3.googleusercontent.com/a/ACg8ocI-3LrdNOhDIFId5_WXJHabTsFijFLobWNYrYEwLucb=s83-c-mo'
+const searchIconURL = process.env.REACT_APP_BASE_PROFILE
 const tagList = ['스터디', '운동', '혼밥', '고민상담']
 
 export default function SearchSection({ category, setCategory }) {

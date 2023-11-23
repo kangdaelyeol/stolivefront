@@ -85,9 +85,10 @@
     display: flex;
     align-items: center;
     cursor: pointer;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
+    min-width: 150px;
+    min-height: 150px;
+    overflow: hidden;
+    border-radius: 500%;
     margin-bottom: 20px;
 }
 
@@ -118,13 +119,14 @@
 
 .profilebox img {
     width: 150px;
+    height: 150px;
     border-radius: 50%;
 }
 
 .loading {
     position: absolute;
-    top:0;
-    left:0;
+    top: 0;
+    left: 0;
     height: 100%;
     width: 100%;
     display: flex;

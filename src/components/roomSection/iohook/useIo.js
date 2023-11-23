@@ -9,7 +9,7 @@ const mediaServ = new MediaService()
 const listenerService = new ListenerService()
 const mediaControlService = new MediaControlService(mediaServ)
 
-export const useIo = (baseURL, roomName, userData) => {
+export const useIo = (baseURL, roomName, userData, attachMessage) => {
     const [myStream, setMyStream] = useState(null)
     const [muted, setMuted] = useState(false)
     const [cameraOff, setCameraOff] = useState(false)
@@ -59,6 +59,7 @@ export const useIo = (baseURL, roomName, userData) => {
                     listeners,
                     setListeners,
                     userData,
+                    attachMessage,
                 )
                 setMyStream(myStream)
                 setCameraOptValues([...camerasSelect])
@@ -96,6 +97,7 @@ export const useIo = (baseURL, roomName, userData) => {
             listeners,
             setListeners,
             userData,
+            attachMessage,
         )
         listenerService.resetIolistener()
     }, [peerConnections])
@@ -112,5 +114,6 @@ export const useIo = (baseURL, roomName, userData) => {
             handleCameraClick,
             handleCameraChange,
         },
+        socket,
     ]
 }

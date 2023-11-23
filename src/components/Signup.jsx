@@ -5,13 +5,13 @@ import Styles from './signup.module.css'
 export default function Signup({ DBService, login, setLogin }) {
     // ** useState to change form Value
     const [formVal, setFormVal] = useState({
-        userName: '1',
-        nickName: '1',
+        userName: 'userName',
+        nickName: 'nickName',
         pw: '1',
         pw2: '1',
-        hb: '1',
-        age: '1',
-        email: '1@1.1',
+        hb: '17',
+        age: '26',
+        email: 'temp@demo.com',
     })
 
     const navigate = useNavigate()
@@ -144,7 +144,7 @@ export default function Signup({ DBService, login, setLogin }) {
                         <input
                             type="submit"
                             className={`${Styles.signupbtn} ${Styles.btn}`}
-                            value="ㅎㄹㅅ"
+                            value="회원가입"
                         />
                         <div
                             onClick={onResetBtnClick}

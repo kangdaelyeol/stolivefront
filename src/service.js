@@ -68,6 +68,7 @@ export class DBService {
     }
 
     updateUser = async ({ userData, formData }) => {
+        console.log(formData)
         const result = await this.http.postFetchReq('user/update', {
             userData,
             formData,

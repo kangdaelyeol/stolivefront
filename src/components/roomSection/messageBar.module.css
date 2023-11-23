@@ -1,0 +1,50 @@
+.container{
+  position: absolute;
+  bottom: 50px;
+  right: 50px;
+  background-color: #282828;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  transition: all .05s linear;
+}
+.activebtn {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  background-color: palegoldenrod;
+  width: 24px;
+  height: 24px;
+  z-index: 2;
+  border-radius: 12px;
+}
+
+.container__active {
+  width:200px;
+  height: 100px;
+  border-radius: 12px;
+}
+
+.active__container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.minput {
+  border: 1px solid gray;
+  border-radius: 10px;
+  outline: none;
+  width:auto;
+  height:30px;
+  font-weight: bold;
+  background-color: #2d2d2d;
+  color:white;
+  padding: 10px;
+}

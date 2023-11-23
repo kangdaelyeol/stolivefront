@@ -1,6 +1,6 @@
 const ROOM_LENGTH = 30
 
-const tempRoomData = {}
+const tempRoomData = []
 
 const categorys = ['스터디', '운동', '혼밥', '고민상담']
 const subCategorys = ['1학년만', '2학년만', '3학년만', '4학년만']
@@ -66,11 +66,16 @@ for (let i = 0; i < ROOM_LENGTH; i++) {
     const sIndex = Math.floor(Math.random() * subCategorys.length)
     const tIndex = Math.floor(Math.random() * titles.length)
     const dIndex = Math.floor(Math.random() * descriptions.length)
+    const users = {
+        length: Math.floor(Math.random() * 30),
+    }
     tempRoomData.push({
         title: titles[tIndex],
         category: categorys[cIndex],
         subCategory: [subCategorys[sIndex]],
         description: descriptions[dIndex],
+        users,
+        roomId: '',
     })
 }
 

@@ -12,7 +12,8 @@ export default class ListenerService {
         setConnectedList,
         listeners,
         setListeners,
-        myData
+        myData,
+        attachMessage,
     ) => {
         this.myStream = myStream
         this.roomName = roomName
@@ -24,6 +25,7 @@ export default class ListenerService {
         this.setConnectedList = setConnectedList
         this.listeners = listeners
         this.setListeners = setListeners
+        this.attachMessage = attachMessage
         this.RTCService = new RTCProcessService(
             myStream,
             roomName,
@@ -33,20 +35,22 @@ export default class ListenerService {
             setIceQueue,
             socket,
             setConnectedList,
-            myData
+            myData,
+            attachMessage,
             // except for lister, setListener
         )
     }
     // ** setIoListener **
     setIoListener = () => {
         if (!this.socket) return
-        const [onWelcome, onOffer, onAnswer, onIce, onWillLeave] =
+        const [onWelcome, onOffer, onAnswer, onIce, onWillLeave, onMessage] =
             this.RTCService.getListeners()
         this.socket.on('welcome', onWelcome)
         this.socket.on('offer', onOffer)
         this.socket.on('answer', onAnswer)
         this.socket.on('ice', onIce)
         this.socket.on('willleave', onWillLeave)
+        this.socket.on('message', onMessage)
 
         this.setListeners({
             onWelcome,
@@ -54,6 +58,7 @@ export default class ListenerService {
             onAnswer,
             onIce,
             onWillLeave,
+            onMessage,
         })
     }
 
@@ -64,7 +69,7 @@ export default class ListenerService {
         this.socket.off('answer', this.listeners.onAnswer)
         this.socket.off('ice', this.listeners.onIce)
         this.socket.off('willLeave', this.listeners.onWillLeave)
-
+        this.socket.off('message', this.listeners.onMessage)
         this.setIoListener()
     }
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import pImg from '../../images/pimg.jpeg'
 import Styles from './profileModal.module.css'
+const pImg = process.env.REACT_APP_BASE_PROFILE
 
 export default function ProfileModal({ user, setModal, setLogin }) {
     const navigate = useNavigate()
@@ -32,7 +32,7 @@ export default function ProfileModal({ user, setModal, setLogin }) {
                     src={user.profile === 'None' ? pImg : user.profile}
                     alt="profile"
                 />
-                <div className={Styles.profileedit}>e</div>
+                <div className={Styles.profileedit}> </div>
             </div>
             <div className={Styles.hello}>안녕하세요, {user.nickName}님.</div>
             <div onClick={onManageClick} className={Styles.managebtn}>
