@@ -85,7 +85,8 @@
     display: flex;
     align-items: center;
     cursor: pointer;
-    overflow: hidden;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     margin-bottom: 20px;
 }
@@ -104,6 +105,7 @@
     place-items: center;
     opacity: 0;
     transition: all 0.2s linear;
+    border-radius: 50%;
 }
 
 .profilebox:hover .editform {
@@ -116,6 +118,18 @@
 
 .profilebox img {
     width: 150px;
-    height: 150px;
     border-radius: 50%;
+}
+
+.loading {
+    position: absolute;
+    top:0;
+    left:0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: 3;
 }

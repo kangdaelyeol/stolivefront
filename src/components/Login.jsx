@@ -33,8 +33,7 @@ export default function Login({ login, setLogin, DBService }) {
         const result = await DBService.login({ ...inputVal })
         if (!result.status) {
             setIsloading(false)
-            return
-            // when Login false
+            return alert("사용자 정보가 일치하지 않습니다.")
         }
 
         setLogin({

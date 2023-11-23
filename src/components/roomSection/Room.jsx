@@ -1,43 +1,37 @@
 import React, { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import Styles from './room.module.css'
-import tempImg from '../../images/pimg.jpeg'
-import tempMyImg from '../../images/p_profile.jpeg'
 import PeerBox from './PeerBox'
 import ControlBar from './ControlBar'
 import { useIo } from './iohook/useIo'
-const SOCKET_SERVER_URL = 'http://localhost:8000'
 
 const tempProfile =
     'https://lh3.googleusercontent.com/a/ACg8ocI-3LrdNOhDIFId5_WXJHabTsFijFLobWNYrYEwLucb=s83-c-mo'
 
-const myData = {
-    userName: '강대렬',
-    profile: tempImg,
-    video: tempMyImg,
-}
 // *** Socket io connection ***
 
 export default function Room({ DBService, userData }) {
+    const navigate = useNavigate()
     const { id } = useParams()
     const roomName = id
     // *** useState ***
 
     // IO Listener Initialize - when PeerConnections change
     const [myStream, connectedList, controlProps] = useIo(
-        SOCKET_SERVER_URL,
+        process.env.REACT_APP_BASE_URL,
         roomName,
-        userData
+        userData,
     )
 
     // ** useEffect - isExist -> room Info
     useEffect(() => {
+        if (!DBService || !roomName || userData) return navigate('/home')
         ;(async () => {
             const data = await DBService.getRoomById(roomName)
             console.log(roomName)
             console.log(data)
         })()
-    }, [])
+    }, [DBService, roomName, navigate, userData])
 
     // 일단 peerbox 사이즈 임의로 16:9 (400 / 225)
     return (

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Styles from './profileEdit.module.css'
 import tempProfile from '../images/pimg.jpeg'
+import LoadingSpinner from './LoadingSpinner'
 
 export default function ProfileEdit({ setLogin, DBService, user }) {
     // *** useState ***
@@ -18,15 +19,14 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
 
     // formData to req Cloudinary when profile is decided clearly
     const [formData, setFormData] = useState(false)
-
+    const [isLoading, setIsLoading] = useState(false)
     // *** useNavigate ***
     const navigate = useNavigate()
 
     // *** useEffect(Custem Hook) ***
     useEffect(() => {
-        if (!user) return
+        if (!user) return navigate('/login')
         setFormVal({
-            userName: user.userName,
             nickName: user.nickName,
             pw: '',
             pw2: '',
@@ -34,18 +34,20 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
             age: user.age,
             email: user.email,
         })
-        setProfileUrl(user.profile)
-    }, [user])
+        setProfileUrl(user?.profile)
+    }, [user, navigate])
 
     // ** useEffect - when profile is changed
     useEffect(() => {
         return async () => {
+            if (!user) return navigate('/login')
             if (user.profile === profileUrl) return
-
+            setIsLoading(true)
             const result = await DBService.deleteTempProfile(profileUrl)
+            setIsLoading(false)
             console.log(result)
         }
-    }, [profileUrl])
+    }, [profileUrl, navigate, DBService, user])
 
     // *** useRef ***
     const profileRef = useRef()
@@ -66,6 +68,7 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
             alert('학번 이름 잘 써줘용')
             return
         }
+        setIsLoading(true)
         const submitData = { ...formVal, profile: profileUrl }
         delete submitData.pw2
 
@@ -90,6 +93,7 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
             default:
                 throw new Error('홀리싯 Mongoose Error')
         }
+        setIsLoading(false)
     }
 
     const onFormChange = (e) => {
@@ -117,6 +121,12 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
     return (
         <div className={Styles.container}>
             <div className={Styles.wrapper}>
+                {isLoading && (
+                    <div className={Styles.loading}>
+                        <LoadingSpinner message={'Loading'} />
+                    </div>
+                )}
+
                 <div className={Styles.title}>회원정보 수정</div>
                 <div className={Styles.profilebox}>
                     <form encType="multipart/form-data">
@@ -129,7 +139,7 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
                         />
                     </form>
                     <div onClick={onProfileClick} className={Styles.profilebox}>
-                        <div className={Styles.editform}>수정</div>
+                        <div className={Styles.editform}>Edit</div>
                         <img
                             src={
                                 profileUrl === 'None' ? tempProfile : profileUrl
@@ -146,7 +156,7 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
                         <input
                             type="text"
                             name="nickName"
-                            value={formVal.nickName}
+                            value={formVal?.nickName}
                             className={Styles.signup__input}
                             placeholder="닉네임"
                             onChange={onFormChange}
@@ -154,7 +164,7 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
                         <input
                             type="password"
                             name="pw"
-                            value={formVal.pw}
+                            value={formVal?.pw}
                             className={Styles.signup__input}
                             placeholder="비밀번호"
                             onChange={onFormChange}
@@ -162,7 +172,7 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
                         <input
                             type="password"
                             name="pw2"
-                            value={formVal.pw2}
+                            value={formVal?.pw2}
                             className={Styles.signup__input}
                             placeholder="비밀번호 확인"
                             onChange={onFormChange}
@@ -170,7 +180,7 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
                         <input
                             type="email"
                             name="email"
-                            value={formVal.email}
+                            value={formVal?.email}
                             className={Styles.signup__input}
                             placeholder="이메일"
                             onChange={onFormChange}
@@ -197,7 +207,7 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
                             <input
                                 type="submit"
                                 className={`${Styles.signupbtn} ${Styles.btn}`}
-                                value="ㅎㄹㅅ"
+                                value="Update"
                             />
                         </div>
                     </form>

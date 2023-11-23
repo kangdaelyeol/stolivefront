@@ -18,7 +18,7 @@ const CategoryBox = ({ value, main }) => {
 const RoomBox = ({
     title,
     description,
-    people,
+    users,
     category,
     subCategory,
     roomId,
@@ -30,7 +30,9 @@ const RoomBox = ({
     return (
         <div className={Styles.room__box} onClick={onBoxClick}>
             <div className={Styles.box__top}>
-                <div className={Styles.box__top__people}>{people}명 참여중</div>
+                <div className={Styles.box__top__people}>
+                    {users.length}명 참여중
+                </div>
             </div>
             <div className={Styles.box__middle}>
                 <div className={Styles.box__middle__title}>{title}</div>
