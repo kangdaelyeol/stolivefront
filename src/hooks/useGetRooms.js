@@ -29,7 +29,7 @@ const tempRoomData = [
 
 const useGetRooms = (DBService) => {
     const [roomData, setRoomData] = useState([])
-    const [refresh, setRefresh] = useState(true)
+    const [refresh, setRefresh] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     // Room 받아오기
     useEffect(() => {

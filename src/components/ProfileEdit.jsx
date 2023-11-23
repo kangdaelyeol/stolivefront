@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Styles from './profileEdit.module.css'
-import useLogin from '../hooks/useLogin'
 import tempProfile from '../images/pimg.jpeg'
 
 export default function ProfileEdit({ setLogin, DBService, user }) {
@@ -24,7 +23,6 @@ export default function ProfileEdit({ setLogin, DBService, user }) {
     const navigate = useNavigate()
 
     // *** useEffect(Custem Hook) ***
-    useLogin(setLogin, '/edit')
     useEffect(() => {
         if (!user) return
         setFormVal({

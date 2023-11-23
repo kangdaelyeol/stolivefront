@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import Room from './components/roomSection/Room'
 import Header from './components/headerSection/Header'
 import Home from './components/homeSection/Home'
@@ -9,27 +9,30 @@ import ProfileEdit from './components/ProfileEdit'
 
 const App = ({ DBService, AuthService }) => {
     const [login, setLogin] = useState({ status: false })
+
     return (
         <BrowserRouter>
             <Header login={login} setLogin={setLogin} />
             <Routes>
                 <Route
                     element={
-                        <Home
-                            login={login}
+                        <LoggedInOnly
+                            authService={AuthService}
                             setLogin={setLogin}
-                            DBService={DBService}
-                        />
+                        >
+                            <Home login={login} DBService={DBService} />
+                        </LoggedInOnly>
                     }
                     path="/home"
                 />
                 <Route
                     element={
-                        <Room
-                            login={login}
+                        <LoggedInOnly
+                            authService={AuthService}
                             setLogin={setLogin}
-                            DBService={DBService}
-                        />
+                        >
+                            <Room DBService={DBService} userData={login.data} />
+                        </LoggedInOnly>
                     }
                     path="/room/:id"
                 />
@@ -48,8 +51,8 @@ const App = ({ DBService, AuthService }) => {
                     element={
                         <Signup
                             DBService={DBService}
+                            login={login}
                             setLogin={setLogin}
-                            AuthService={AuthService}
                         />
                     }
                     path="/signup"
@@ -57,17 +60,56 @@ const App = ({ DBService, AuthService }) => {
                 <Route
                     path="/edit"
                     element={
-                        <ProfileEdit
+                        <LoggedInOnly
+                            authService={AuthService}
                             setLogin={setLogin}
-                            DBService={DBService}
-                            user={login.data}
-                            AuthService={AuthService}
-                        />
+                        >
+                            <ProfileEdit
+                                setLogin={setLogin}
+                                DBService={DBService}
+                                user={login.data}
+                                AuthService={AuthService}
+                            />
+                        </LoggedInOnly>
                     }
                 />
+                <Route path="*" element={<RedirectoToLoginPage />} />
             </Routes>
         </BrowserRouter>
     )
 }
 
 export default App
+
+function LoggedInOnly({ children, authService, setLogin }) {
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        ;(async () => {
+            const jwt = localStorage.getItem('JWT')
+
+            if (!jwt) {
+                navigate('/login')
+                return
+            }
+
+            const res = await authService.checkJWT(jwt)
+            console.log(res.data)
+            if (!res.status) {
+                navigate('/login')
+                return
+            }
+            setLogin({ status: true, data: res.data })
+        })()
+    }, [])
+
+    return children
+}
+
+function RedirectoToLoginPage() {
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        navigate('/login')
+    }, [])
+}

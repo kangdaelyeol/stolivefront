@@ -8,6 +8,7 @@ export default class RTCProcessService {
         setIceQueue,
         socket,
         setConnectedList,
+        myData
     ) {
         this.myStream = myStream
         this.roomName = roomName
@@ -17,12 +18,13 @@ export default class RTCProcessService {
         this.setIceQueue = setIceQueue
         this.socket = socket
         this.setConnectedList = setConnectedList
+        this.myData = myData
     }
 
-    onWelcome = async (senderId) => {
+    onWelcome = async (senderId, userData) => {
         // Welcome -> 처음 온 사람만 보냄
         // senderId -> 처음 온 사람의 Id -> 그 아이디에 대한 peerConnection 처리
-        const peerConnection = this.getRTCPeerConnection(senderId)
+        const peerConnection = this.getRTCPeerConnection(senderId, userData)
 
         const offer = await peerConnection.createOffer()
         peerConnection.setLocalDescription(offer)
@@ -31,14 +33,14 @@ export default class RTCProcessService {
             [senderId]: peerConnection,
         }))
         await new Promise((resolve) => setTimeout(resolve, 1000))
-        this.socket.emit('offer', offer, `${this.roomName}${senderId}`)
+        this.socket.emit('offer', offer, `${this.roomName}${senderId}`, this.myData)
     }
 
-    onOffer = async (offer, senderId) => {
+    onOffer = async (offer, senderId, userData) => {
         // 받은 id == 상대방의 id
 
         // 나는 처음와서 roomJoin 보내고 있던 상대는 offer 받음
-        const peerConnection = this.getRTCPeerConnection(senderId)
+        const peerConnection = this.getRTCPeerConnection(senderId, userData)
         console.log('received the offer from', senderId)
 
         peerConnection.setRemoteDescription(offer)
@@ -79,7 +81,7 @@ export default class RTCProcessService {
         this.handleRemoveStream(senderId)
     }
 
-    getRTCPeerConnection = (senderId) => {
+    getRTCPeerConnection = (senderId, userData) => {
         const peerConnection = new RTCPeerConnection({
             iceServers: [
                 {
@@ -97,7 +99,7 @@ export default class RTCProcessService {
             this.handleIce(data, senderId)
         })
         peerConnection.addEventListener('addstream', (data) => {
-            this.handleAddStream(data, senderId)
+            this.handleAddStream(data, senderId, userData)
         })
         this.myStream
             .getTracks()
@@ -110,11 +112,12 @@ export default class RTCProcessService {
         this.socket.emit('ice', data.candidate, `${this.roomName}${senderId}`)
     }
 
-    handleAddStream(data, senderId) {
+    handleAddStream(data, senderId, userData) {
         console.log('addStream', senderId, data)
         const connectionInfo = {
             senderId: `V_${senderId}`,
             stream: data.stream,
+            userData,
         }
 
         this.setConnectedList((list) => {

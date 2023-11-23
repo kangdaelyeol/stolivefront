@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import Styles from './room.module.css'
 import tempImg from '../../images/pimg.jpeg'
@@ -18,7 +18,7 @@ const myData = {
 }
 // *** Socket io connection ***
 
-export default function Room({ DBService }) {
+export default function Room({ DBService, userData }) {
     const { id } = useParams()
     const roomName = id
     // *** useState ***
@@ -27,7 +27,7 @@ export default function Room({ DBService }) {
     const [myStream, connectedList, controlProps] = useIo(
         SOCKET_SERVER_URL,
         roomName,
-        myData.userName,
+        userData
     )
 
     // ** useEffect - isExist -> room Info
@@ -45,11 +45,11 @@ export default function Room({ DBService }) {
             <div className={Styles.title}>정보보안기사 스터디</div>
             <div className={Styles.peers}>
                 {/* my video */}
-                <PeerBox {...myData} me myStream={myStream} />
+                <PeerBox userData={userData} me myStream={myStream} />
                 {/* peer video */}
                 {connectedList.map((connection, ind) => (
                     <PeerBox
-                        userName={'temp'}
+                        userData={connection.userData}
                         profile={tempProfile}
                         video={connection.stream}
                         speaking={false}

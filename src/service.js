@@ -42,37 +42,36 @@ export class DBService {
     }
 
     getRooms = async () => {
-        const rooms = await this.http.postFetchReq('search')
+        const rooms = await this.http.postFetchReq('room/search')
         console.log(rooms)
         return rooms
     }
 
     createRoom = async (data) => {
-        const result = await this.http.postFetchReq('create', { data })
+        const result = await this.http.postFetchReq('room/create', { data })
         console.log(result)
         return result
     }
 
     getRoomById = async (roomid) => {
-        const result = await this.http.postFetchReq('roominfo', { roomid })
+        const result = await this.http.postFetchReq('room/info', { roomid })
         return result
     }
 
     createUser = async (data) => {
-        const result = await this.http.postFetchReq('createuser', { data })
+        const result = await this.http.postFetchReq('user/create', { data })
         return result
     }
 
-    updateUser = async (data) => {
-        const result = await this.http.postFetchReq('updateuser', { data })
-    }
-
     deleteUser = async (data) => {
-        const result = await this.http.postFetchReq('deleteuser', { data })
+        const result = await this.http.postFetchReq('user/delete', { data })
     }
 
-    updateUser = async ({userData, formData}) => {
-        const result = await this.http.postFetchReq('updateuser', { userData, formData })
+    updateUser = async ({ userData, formData }) => {
+        const result = await this.http.postFetchReq('user/update', {
+            userData,
+            formData,
+        })
         return result
     }
 
@@ -82,13 +81,13 @@ export class DBService {
     }
 
     uploadTempProfile = async (data) => {
-        const result = await this.http.formDataReq('uploadtempprofile', data)
+        const result = await this.http.formDataReq('profile/upload', data)
         console.log(result)
         return result
     }
 
     deleteTempProfile = async (fileUrl) => {
-        const result = await this.http.postFetchReq('deletetempprofile', {
+        const result = await this.http.postFetchReq('profile/delete', {
             fileUrl,
         })
         return result

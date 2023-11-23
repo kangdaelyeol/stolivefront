@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Styles from './signup.module.css'
-import useLogin from '../hooks/useLogin'
 
-export default function Signup({ DBService, setLogin, AuthService }) {
+export default function Signup({ DBService, login, setLogin }) {
     // ** useState to change form Value
     const [formVal, setFormVal] = useState({
         userName: '1',
@@ -16,9 +15,10 @@ export default function Signup({ DBService, setLogin, AuthService }) {
     })
 
     const navigate = useNavigate()
-
+    useEffect(() => {
+        login.status && navigate("/home")
+    })
     // useLogin - custom hook
-    useLogin(setLogin, '/home')
 
     const onResetBtnClick = () => {
         setFormVal({
@@ -76,6 +76,7 @@ export default function Signup({ DBService, setLogin, AuthService }) {
             }
         })
     }
+
     return (
         <div className={Styles.container}>
             <div className={Styles.wrapper}>

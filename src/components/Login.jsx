@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Styles from './login.module.css'
 import loginPgImg from '../images/login_pg_img.png'
-import useLogin from '../hooks/useLogin'
 import useLoading from '../hooks/useLoading'
 
 export default function Login({ login, setLogin, DBService }) {
@@ -13,7 +12,9 @@ export default function Login({ login, setLogin, DBService }) {
         userName: '',
         password: '',
     })
-    useLogin(setLogin, '/home')
+    useEffect(() => {
+        login.status && navigate("/home")
+    })
     const [setIsloading, LoginBtn] = useLoading(
         <input type="submit" className={Styles.login__btn} value="ㅎㄹㅅ" />,
         '100px',

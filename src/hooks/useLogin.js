@@ -10,16 +10,18 @@ const useLogin = (setLogin, path) => {
     useEffect(() => {
         ;(async () => {
             const jwt = localStorage.getItem('JWT')
-            if (jwt) {
-                const res = await authService.checkJWT(jwt)
-                console.log(res.data)
-                if (!res.status) {
-                    navigate('/login')
-                    return setLogin({ status: false })
-                }
-                setLogin({ status: true, data: res.data })
-                navigate(path)
+            if (!jwt) {
+                return navigate('/login')
             }
+            
+            const res = await authService.checkJWT(jwt)
+            console.log(res.data)
+            if (!res.status) {
+                navigate('/login')
+                return setLogin({ status: false })
+            }
+            setLogin({ status: true, data: res.data })
+            navigate(path)
         })()
     }, [])
 }

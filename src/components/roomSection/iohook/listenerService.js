@@ -12,6 +12,7 @@ export default class ListenerService {
         setConnectedList,
         listeners,
         setListeners,
+        myData
     ) => {
         this.myStream = myStream
         this.roomName = roomName
@@ -32,6 +33,7 @@ export default class ListenerService {
             setIceQueue,
             socket,
             setConnectedList,
+            myData
             // except for lister, setListener
         )
     }

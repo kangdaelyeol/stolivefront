@@ -65,7 +65,8 @@
 }
 
 .profile__image {
-    height: 100%;
+    height: 27px;
+    width: 27px;
     border-radius: 50%;
     margin-right: 10px;
     cursor: pointer;

@@ -5,7 +5,7 @@ export default function LoadingSpinner({ size, message }) {
     return (
         <div
             className={Styles.loading__container}
-            style={{ height: size || '', width: size || '' }}
+            style={size && { height: size || '', width: size || '' }}
         >
             <div className={`${Styles.loading__part1} ${Styles.common}`}> </div>
             <div className={`${Styles.loading__part2} ${Styles.common}`}> </div>

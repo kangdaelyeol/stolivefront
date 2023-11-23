@@ -3,12 +3,13 @@ import { MediaService } from './mediaService'
 import ListenerService from './listenerService'
 import io from 'socket.io-client'
 import MediaControlService from './mediaControlService'
+import { useNavigate } from 'react-router-dom'
 
 const mediaServ = new MediaService()
 const listenerService = new ListenerService()
 const mediaControlService = new MediaControlService(mediaServ)
 
-export const useIo = (baseURL, roomName, userName) => {
+export const useIo = (baseURL, roomName, userData) => {
     const [myStream, setMyStream] = useState(null)
     const [muted, setMuted] = useState(false)
     const [cameraOff, setCameraOff] = useState(false)
@@ -18,6 +19,10 @@ export const useIo = (baseURL, roomName, userName) => {
     const [iceQueue, setIceQueue] = useState([])
     const [socket, setSocket] = useState(null)
     const [listeners, setListeners] = useState({})
+    const navigate = useNavigate()
+    if (!userData) {
+        navigate('/login')
+    }
 
     mediaControlService.setProps(
         myStream,
@@ -52,11 +57,12 @@ export const useIo = (baseURL, roomName, userName) => {
                     setConnectedList,
                     listeners,
                     setListeners,
+                    userData,
                 )
                 setMyStream(myStream)
                 setCameraOptValues([...camerasSelect])
                 listenerService.setIoListener()
-                socket.emit('join_room', roomName, socket.id, userName)
+                socket.emit('join_room', roomName, socket.id, userData)
             })
             socket.on('error', (e) => {
                 console.log(e)
